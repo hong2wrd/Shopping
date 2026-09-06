@@ -13,3 +13,18 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  jwt:
+    prefix: "Bearer "
+    access-expiration-time: 1_800_000 # 30분
+    refresh-expiration-time: 604_800_000 # 7일
+    secret: ${JWT_SECRET}
+    accessTokenHeader: Authorization
+    refreshTokenHeader: Refresh-Token
+
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  password: ${REDIS_PASSWORD}
+
+cookie:
+  secure: true;
