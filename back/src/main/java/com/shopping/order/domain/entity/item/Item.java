@@ -1,6 +1,6 @@
-package com.shopping.domain.entity.item;
+package com.shopping.order.domain.entity.item;
 
-import com.shopping.domain.entity.BaseEntity;
+import com.shopping.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

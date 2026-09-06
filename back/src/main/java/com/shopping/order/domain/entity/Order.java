@@ -1,5 +1,7 @@
-package com.shopping.domain.entity;
+package com.shopping.order.domain.entity;
 
+import com.shopping.common.domain.BaseEntity;
+import com.shopping.member.domain.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;

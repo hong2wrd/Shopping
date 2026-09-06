@@ -1,5 +1,6 @@
-package com.shopping.domain.entity;
+package com.shopping.member.domain.entity;
 
+import com.shopping.common.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -18,10 +19,22 @@ public class Member extends BaseEntity {
 
     @Column(name = "member_id", nullable = false, length = 20, updatable = false)
     private String memId;
+
+    @Column(nullable = false, length = 60)
+    private String password;
     private String name;
+
+    private Role role;
 
     @Builder.Default
     private boolean retired = false;
 
+    public static Member of(String memId, String name, String role) {
+        return Member.builder()
+                .memId(memId)
+                .name(name)
+                .role(Role.valueOf(role))
+                .build();
+    }
 
 }
