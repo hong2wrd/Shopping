@@ -37,4 +37,13 @@ public class Member extends BaseEntity {
                 .build();
     }
 
+    public static Member join(String memId, String encryptPassword, String name, String role) {
+        return Member.builder()
+                .memId(memId)
+                .password(encryptPassword)
+                .name(name)
+                .role(Role.valueOf(role))
+                .build();
+    }
+
 }
