@@ -1,6 +1,6 @@
 package com.shopping.common.security;
 
-import com.shopping.member.domain.entity.Member;
+import com.shopping.member.entity.Member;
 import com.shopping.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;

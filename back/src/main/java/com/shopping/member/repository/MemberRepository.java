@@ -1,6 +1,6 @@
 package com.shopping.member.repository;
 
-import com.shopping.member.domain.entity.Member;
+import com.shopping.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
