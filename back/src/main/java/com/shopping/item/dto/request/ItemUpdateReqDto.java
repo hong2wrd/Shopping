@@ -1,20 +1,29 @@
 package com.shopping.item.dto.request;
 
-import com.shopping.item.dto.ItemDefaultDto;
 import com.shopping.item.entity.ItemType;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
-public class ItemUpdateReqDto extends ItemDefaultDto {
+public class ItemUpdateReqDto {
 
     @NotNull
     private Long itemId;
 
     @NotNull(message = "상품 타입은 필수입니다.")
     private ItemType itemtype;
+
     private String author;
+
+    @NotBlank(message = "상품명은 필수 입력 항목입니다.")
+    private String name;
+
+    @Positive(message = "가격은 0원보다 커야 합니다.")
+    private int price;
 
 }

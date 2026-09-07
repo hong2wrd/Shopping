@@ -48,7 +48,7 @@ public abstract class Item extends BaseEntity {
      * 재고 변뎡
      * @param stockQuantity
      */
-    protected void adjustStock(int stockQuantity) {
+    public void adjustStock(int stockQuantity) {
         if (stockQuantity < 0) {
             throw new InvalidItemValueException("재고는 0보다 작을 수 없습니다.");
         }

@@ -45,11 +45,6 @@ public class Book extends Item {
         this.author = author;
     }
 
-    public void adjustStock(int stockQuantity) {
-        super.adjustStock(stockQuantity);
-
-    }
-
     private void validateAuthor(String author) {
         if(author == null || author.isBlank()) {
             throw new IllegalArgumentException("저자명은 필수사항입니다.");
