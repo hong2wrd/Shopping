@@ -38,6 +38,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilter(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) {
         return httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
