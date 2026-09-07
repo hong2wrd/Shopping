@@ -1,7 +1,9 @@
 package com.shopping.item.service;
 
-import com.shopping.item.dto.request.TotalItemSaveReqDto;
-import com.shopping.item.dto.request.TotalItemUpdateReqDto;
+import com.shopping.common.exception.BusinessException;
+import com.shopping.common.exception.ErrorCode;
+import com.shopping.item.dto.request.ItemSaveReqDto;
+import com.shopping.item.dto.request.ItemUpdateReqDto;
 import com.shopping.item.dto.response.ItemRespDto;
 import com.shopping.item.entity.Book;
 import com.shopping.item.entity.Item;
@@ -22,42 +24,48 @@ public class ItemService {
     public ItemRespDto searchItem(Long itemId) {
 
         Item findItem = itemRepository.findById(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
         if(findItem instanceof Book book) {
             return ItemMapper.toDto(book);
         }
 
-        throw new IllegalStateException("지원하지 않는 상품 타입입니다.");
+        throw new BusinessException(ErrorCode.ITEM_NOT_SUPPORTED);
     }
 
     /**
      * 상품을 저장합니다.
      */
-    public void saveItem(TotalItemSaveReqDto totalItemSaveReqDto) {
-        Item item = switch (totalItemSaveReqDto.getItemtype()) {
+    public ItemRespDto saveItem(ItemSaveReqDto itemSaveReqDto) {
+        Item item = switch (itemSaveReqDto.getItemtype()) {
             case BOOK -> Book.create(
-                    totalItemSaveReqDto.getPrice(),
-                    totalItemSaveReqDto.getStockQuantity(),
-                    totalItemSaveReqDto.getName(),
-                    totalItemSaveReqDto.getAuthor());
+                    itemSaveReqDto.getPrice(),
+                    itemSaveReqDto.getQuantity(),
+                    itemSaveReqDto.getName(),
+                    itemSaveReqDto.getAuthor());
         };
 
-        itemRepository.save(item);
+        Item saveItem = itemRepository.save(item);
+        if(saveItem instanceof Book) {
+            return ItemMapper.toDto((Book) saveItem);
+        }
+
+        return ItemMapper.toDto(saveItem);
     }
 
     /**
      * 상품을 수정합니다.
      */
-    public void updateItem(TotalItemUpdateReqDto totalItemSaveReqDto) {
+    public ItemRespDto updateItem(ItemUpdateReqDto totalItemSaveReqDto) {
         Item findItem = itemRepository.findByIdForUpdate(totalItemSaveReqDto.getItemId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
-        findItem.update(
-                totalItemSaveReqDto.getName(),
-                totalItemSaveReqDto.getPrice(),
-                totalItemSaveReqDto.getStockQuantity()
-        );
+        if(findItem instanceof Book book) {
+            book.updateInfo(totalItemSaveReqDto.getName(), totalItemSaveReqDto.getPrice());
+            return ItemMapper.toDto(book);
+        }
+
+        return ItemMapper.toDto(findItem);
     }
 
     /**
@@ -65,7 +73,7 @@ public class ItemService {
      */
     public void deleteItem(Long itemId) {
         Item findItem = itemRepository.findByIdForUpdate(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
         itemRepository.delete(findItem);
     }
@@ -77,7 +85,7 @@ public class ItemService {
      */
     public void addStock(Long itemId, int quantity) {
         Item findItem = itemRepository.findByIdForUpdate(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
         findItem.addStock(quantity);
     }
@@ -89,7 +97,7 @@ public class ItemService {
      */
     public void removeStock(Long itemId, int quantity) {
         Item findItem = itemRepository.findByIdForUpdate(itemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품이 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
         findItem.removeStock(quantity);
     }

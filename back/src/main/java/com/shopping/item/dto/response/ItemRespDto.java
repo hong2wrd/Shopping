@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ItemRespDto extends ItemDefaultDto {
+    private Long itemId;
     private ItemType itemType;
     private String author;
 }

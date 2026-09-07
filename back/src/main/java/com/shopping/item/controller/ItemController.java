@@ -1,11 +1,12 @@
 package com.shopping.item.controller;
 
 import com.shopping.common.dto.ResponseDto;
-import com.shopping.item.dto.request.TotalItemSaveReqDto;
-import com.shopping.item.dto.request.TotalItemUpdateReqDto;
+import com.shopping.item.dto.request.ItemSaveReqDto;
+import com.shopping.item.dto.request.ItemUpdateReqDto;
 import com.shopping.item.service.ItemService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,19 +23,15 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<?> saveItem(@RequestBody @Valid TotalItemSaveReqDto totalItemSaveReqDto) {
-
-        itemService.saveItem(totalItemSaveReqDto);
-
-        return ResponseEntity.ok(new ResponseDto<>(1, "상품을 등록하였습니다."));
+    public ResponseEntity<?> saveItem(@RequestBody @Valid ItemSaveReqDto itemSaveReqDto) {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ResponseDto<>(1, "상품을 등록하였습니다.", itemService.saveItem(itemSaveReqDto)));
     }
 
     @PutMapping
-    public ResponseEntity<?> updateItem(@RequestBody @Valid TotalItemUpdateReqDto totalItemSaveReqDto) {
-
-        itemService.updateItem(totalItemSaveReqDto);
-
-        return ResponseEntity.ok(new ResponseDto<>(1, "상품을 수정하였습니다."));
+    public ResponseEntity<?> updateItem(@RequestBody @Valid ItemUpdateReqDto totalItemSaveReqDto) {
+        return ResponseEntity.ok(new ResponseDto<>(1, "상품을 수정하였습니다.", itemService.updateItem(totalItemSaveReqDto)));
     }
 
     @DeleteMapping("/{itemId}")

@@ -16,6 +16,6 @@ public class ItemDefaultDto {
     private int price;
 
     @Min(value = 0, message = "재고가 0보다 작을 수 없습니다.")
-    private int stockQuantity;
+    private int quantity;
 
 }
