@@ -15,7 +15,6 @@ public final class ItemMapper {
                 .author(book.getAuthor())
                 .build();
 
-        response.setItemId(book.getId());
         response.setName(book.getName());
         response.setPrice(book.getPrice());
         response.setStockQuantity(book.getStockQuantity());
