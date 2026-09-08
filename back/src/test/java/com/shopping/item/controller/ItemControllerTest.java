@@ -1,7 +1,7 @@
 package com.shopping.item.controller;
 
 import com.shopping.item.dto.request.ItemSaveReqDto;
-import com.shopping.item.entity.Book;
+import com.shopping.item.entity.culture.Book;
 import com.shopping.item.entity.ItemType;
 import com.shopping.item.repository.ItemRepository;
 import com.shopping.member.entity.Member;

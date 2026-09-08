@@ -6,6 +6,9 @@ import com.shopping.item.exception.InvalidItemValueException;
 import jakarta.persistence.*;
 import lombok.*;
 
+/**
+ * 상품 엔티티
+ */
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +29,17 @@ public abstract class Item extends BaseEntity {
     @Column(nullable = false)
     private int stockQuantity;
 
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    /**
+     * 상품 생성
+     * @param name 상품 이름
+     * @param price 상품 가격
+     * @param stockQuantity 상품 재고 수량
+     */
     protected Item(String name, int price, int stockQuantity) {
         validate(name, price);
 
@@ -36,6 +50,8 @@ public abstract class Item extends BaseEntity {
 
     /**
      * 상품 정보 수정
+     * @param name 변경할 상품 이름
+     * @param price 변경할 상품 가격
      */
     public void updateInfo(String name, int price) {
         validate(name, price);
@@ -45,8 +61,8 @@ public abstract class Item extends BaseEntity {
     }
 
     /**
-     * 재고 변뎡
-     * @param stockQuantity
+     * 재고 변경
+     * @param stockQuantity 대체할 재고 수량
      */
     public void adjustStock(int stockQuantity) {
         if (stockQuantity < 0) {
@@ -58,6 +74,7 @@ public abstract class Item extends BaseEntity {
 
     /**
      * 재고 수량 증가
+     * @param quantity 증가할 재고 수량
      */
     public void addStock(int quantity) {
         if(quantity < 0) {
@@ -68,6 +85,7 @@ public abstract class Item extends BaseEntity {
 
     /**
      * 재고 수량 감소
+     * @param quantity 감소할 재고 수량
      */
     public void removeStock(int quantity) {
         if(quantity < 0) {
@@ -81,6 +99,11 @@ public abstract class Item extends BaseEntity {
         this.stockQuantity -= quantity;
     }
 
+    /**
+     * 상품 정보 유효성 검증
+     * @param name 변경할 상품 이름
+     * @param price 변경할 상품 가격
+     */
     private void validate(String name, int price) {
         if (name == null || name.isBlank()) {
             throw new InvalidItemValueException("상품명은 필수입니다.");
@@ -89,5 +112,12 @@ public abstract class Item extends BaseEntity {
         if (price <= 0) {
             throw new InvalidItemValueException("가격은 0원보다 커야 합니다.");
         }
+    }
+
+    /**
+     * 카테고리 제거
+     */
+    public void removeCategory() {
+        this.category = null;
     }
 }

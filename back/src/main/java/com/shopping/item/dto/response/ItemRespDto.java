@@ -12,5 +12,8 @@ import lombok.*;
 public class ItemRespDto extends ItemDefaultDto {
     private Long itemId;
     private ItemType itemType;
+
     private String author;
+
+    private String size;
 }

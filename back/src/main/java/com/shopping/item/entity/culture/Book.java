@@ -1,5 +1,6 @@
-package com.shopping.item.entity;
+package com.shopping.item.entity.culture;
 
+import com.shopping.item.entity.Item;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -13,7 +14,7 @@ import lombok.*;
 @Builder(access = AccessLevel.PRIVATE)
 public class Book extends Item {
 
-    @Column(nullable = false)
+    @Column
     private String author;
 
     protected Book(String name, int price, int stockQuantity, String author) {

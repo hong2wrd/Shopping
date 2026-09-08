@@ -5,8 +5,9 @@ import com.shopping.common.exception.ErrorCode;
 import com.shopping.item.dto.request.ItemSaveReqDto;
 import com.shopping.item.dto.request.ItemUpdateReqDto;
 import com.shopping.item.dto.response.ItemRespDto;
-import com.shopping.item.entity.Book;
+import com.shopping.item.entity.culture.Book;
 import com.shopping.item.entity.Item;
+import com.shopping.item.entity.clothes.Top;
 import com.shopping.item.mapper.ItemMapper;
 import com.shopping.item.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,12 @@ public class ItemService {
                     itemSaveReqDto.getQuantity(),
                     itemSaveReqDto.getName(),
                     itemSaveReqDto.getAuthor());
+            case TOP -> Top.create(
+                    itemSaveReqDto.getPrice(),
+                    itemSaveReqDto.getQuantity(),
+                    itemSaveReqDto.getName(),
+                    itemSaveReqDto.getSize());
+            default -> throw new BusinessException(ErrorCode.ITEM_NOT_SUPPORTED);
         };
 
         Item saveItem = itemRepository.save(item);

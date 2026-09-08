@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 public class ItemUpdateReqDto {
 
-    @NotNull
+    @NotNull(message = "상품 ID는 필수 입력값입니다.")
     private Long itemId;
 
     @NotNull(message = "상품 타입은 필수입니다.")
