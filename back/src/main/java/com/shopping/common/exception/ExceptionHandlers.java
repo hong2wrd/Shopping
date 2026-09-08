@@ -31,7 +31,7 @@ public class ExceptionHandlers {
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<?> apiExceptionHandler(BusinessException e) {
+    public ResponseEntity<?> businessExceptionHandler(BusinessException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), e.getErrorMap()), e.getHttpStatus());
     }
