@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
                         // TODO 추후 변경 예정
-                        auth.anyRequest().permitAll())
+                        auth.anyRequest().authenticated())
 
                 .addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtProperties, redisRefreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(new JwtAuthorizationFilter(authenticationManager, jwtProperties))
