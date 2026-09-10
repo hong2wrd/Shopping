@@ -1,6 +1,7 @@
 package com.shopping.member.entity;
 
 import com.shopping.common.entity.BaseEntity;
+import com.shopping.member.exception.MemberValidationException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -22,10 +23,12 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false, length = 60)
     private String password;
+    @Column(nullable = false, length = 20)
     private String name;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private MemberShip memberShip;
+    private MemberShip memberShip = MemberShip.BRONZE;
 
     private Role role;
 
@@ -49,4 +52,41 @@ public class Member extends BaseEntity {
                 .build();
     }
 
+    /**
+     * 사용자 생성
+     * @param memId 사용자 ID
+     * @param name 사용자 이름
+     * @param encodedPassword 암호화된 비밀번호
+     * @return Member
+     */
+    public static Member create(String memId, String name, String encodedPassword) {
+        memberValidate(memId, name, encodedPassword);
+
+        Member member = Member.builder()
+                .memId(memId)
+                .name(name)
+                .password(encodedPassword)
+                .build();
+        member.setCreatedBy(memId);
+
+        return member;
+    }
+
+    private static void memberValidate(String memId, String name, String encodedPassword) {
+        if(memId == null || memId.isBlank()) {
+            throw new MemberValidationException("사용자 ID는 필수 사항입니다.");
+        }
+
+        if (memId.length() > 20) {
+            throw new MemberValidationException("사용자 ID는 20자 이하여야합니다.");
+        }
+
+        if(name == null || name.isBlank()) {
+            throw new MemberValidationException("사용자 이름은 필수 사항입니다.");
+        }
+
+        if (encodedPassword == null || encodedPassword.isBlank()) {
+            throw new MemberValidationException("비밀번호는 필수 사항입니다.");
+        }
+    }
 }
