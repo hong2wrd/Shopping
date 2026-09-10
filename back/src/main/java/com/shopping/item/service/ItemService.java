@@ -21,6 +21,11 @@ public class ItemService {
 
     private final ItemRepository itemRepository;
 
+    /**
+     * 상품 조회
+     * @param itemId 조회할 상품 ID
+     * @return 상품 DTO
+     */
     @Transactional(readOnly = true)
     public ItemRespDto searchItem(Long itemId) {
 
@@ -77,6 +82,7 @@ public class ItemService {
 
     /**
      * 상품을 삭제합니다.
+     * @param itemId 삭제할 상품 ID
      */
     public void deleteItem(Long itemId) {
         Item findItem = itemRepository.findByIdForUpdate(itemId)
