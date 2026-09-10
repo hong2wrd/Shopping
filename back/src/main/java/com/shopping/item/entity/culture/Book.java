@@ -38,7 +38,7 @@ public class Book extends Item {
         return new Book(name, price, stockQuantity, author);
     }
 
-    public void updateInfo(String name, int price, int stockQuantity, String author) {
+    public void updateInfo(String name, int price, String author) {
         super.updateInfo(name, price);
 
         validateAuthor(author);

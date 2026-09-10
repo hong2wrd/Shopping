@@ -33,4 +33,10 @@ public class Shoes extends Item {
     public static Shoes create(int price, int stockQuantity, String name, Size size) {
         return new Shoes(name, price, stockQuantity, size);
     }
+
+    public void updateInfo(String name, int price, Size size) {
+        super.updateInfo(name, price);
+
+        this.size = size;
+    }
 }

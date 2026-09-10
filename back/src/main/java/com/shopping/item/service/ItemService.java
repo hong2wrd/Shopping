@@ -5,11 +5,15 @@ import com.shopping.common.exception.ErrorCode;
 import com.shopping.item.dto.request.ItemSaveReqDto;
 import com.shopping.item.dto.request.ItemUpdateReqDto;
 import com.shopping.item.dto.response.ItemRespDto;
+import com.shopping.item.entity.clothes.Bottom;
+import com.shopping.item.entity.clothes.Outer;
+import com.shopping.item.entity.clothes.Shoes;
 import com.shopping.item.entity.culture.Book;
 import com.shopping.item.entity.Item;
 import com.shopping.item.entity.clothes.Top;
 import com.shopping.item.mapper.ItemMapper;
 import com.shopping.item.repository.ItemRepository;
+import com.shopping.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 상품 조회
@@ -42,8 +47,24 @@ public class ItemService {
     /**
      * 상품을 저장합니다.
      */
-    public ItemRespDto saveItem(ItemSaveReqDto itemSaveReqDto) {
-        Item item = switch (itemSaveReqDto.getItemtype()) {
+    public ItemRespDto saveItem(String memId, ItemSaveReqDto itemSaveReqDto) {
+        memberRepository.findByMemIdAndRetiredIsFalse(memId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
+
+        Item item = createItem(itemSaveReqDto);
+
+        Item saveItem = itemRepository.save(item);
+
+        return ItemMapper.toDto(saveItem);
+    }
+
+    /**
+     * Item 객체 생성
+     * @param itemSaveReqDto 상품 저장 정보
+     * @return
+     */
+    private Item createItem(ItemSaveReqDto itemSaveReqDto) {
+        return switch (itemSaveReqDto.getItemtype()) {
             case BOOK -> Book.create(
                     itemSaveReqDto.getPrice(),
                     itemSaveReqDto.getQuantity(),
@@ -54,29 +75,46 @@ public class ItemService {
                     itemSaveReqDto.getQuantity(),
                     itemSaveReqDto.getName(),
                     itemSaveReqDto.getSize());
+            case BOTTOM -> Bottom.create(
+                    itemSaveReqDto.getPrice(),
+                    itemSaveReqDto.getQuantity(),
+                    itemSaveReqDto.getName(),
+                    itemSaveReqDto.getSize());
+            case OUTER -> Outer.create(
+                    itemSaveReqDto.getPrice(),
+                    itemSaveReqDto.getQuantity(),
+                    itemSaveReqDto.getName(),
+                    itemSaveReqDto.getSize());
+            case SHOES -> Shoes.create(
+                    itemSaveReqDto.getPrice(),
+                    itemSaveReqDto.getQuantity(),
+                    itemSaveReqDto.getName(),
+                    itemSaveReqDto.getSize());
             default -> throw new BusinessException(ErrorCode.ITEM_NOT_SUPPORTED);
         };
-
-        Item saveItem = itemRepository.save(item);
-        if(saveItem instanceof Book) {
-            return ItemMapper.toDto((Book) saveItem);
-        }
-
-        return ItemMapper.toDto(saveItem);
     }
 
     /**
      * 상품을 수정합니다.
      */
-    public ItemRespDto updateItem(ItemUpdateReqDto totalItemSaveReqDto) {
-        Item findItem = itemRepository.findByIdForUpdate(totalItemSaveReqDto.getItemId())
+    public ItemRespDto updateItem(String memId, ItemUpdateReqDto itemUpdateReqDto) {
+        memberRepository.findByMemIdAndRetiredIsFalse(memId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
+
+        Item findItem = itemRepository.findByIdForUpdate(itemUpdateReqDto.getItemId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
         if(findItem instanceof Book book) {
-            book.updateInfo(totalItemSaveReqDto.getName(), totalItemSaveReqDto.getPrice());
-            return ItemMapper.toDto(book);
+            book.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getAuthor());
+        } else if(findItem instanceof Top top) {
+            top.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
+        } else if(findItem instanceof Bottom bottom) {
+            bottom.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
+        } else if(findItem instanceof Outer outer) {
+            outer.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
+        } else if(findItem instanceof Shoes shoes) {
+            shoes.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
         }
-
         return ItemMapper.toDto(findItem);
     }
 
@@ -84,11 +122,14 @@ public class ItemService {
      * 상품을 삭제합니다.
      * @param itemId 삭제할 상품 ID
      */
-    public void deleteItem(Long itemId) {
+    public void deleteItem(String memId, Long itemId) {
+        memberRepository.findByMemIdAndRetiredIsFalse(memId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
+
         Item findItem = itemRepository.findByIdForUpdate(itemId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
-        itemRepository.delete(findItem);
+        findItem.delete();
     }
 
     /**

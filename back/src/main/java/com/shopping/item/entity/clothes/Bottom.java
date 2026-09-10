@@ -33,4 +33,11 @@ public class Bottom extends Item {
     public static Bottom create(int price, int stockQuantity, String name, Size size) {
         return new Bottom(name, price, stockQuantity, size);
     }
+
+
+    public void updateInfo(String name, int price, Size size) {
+        super.updateInfo(name, price);
+
+        this.size = size;
+    }
 }

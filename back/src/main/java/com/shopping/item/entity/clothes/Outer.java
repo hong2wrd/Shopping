@@ -33,4 +33,10 @@ public class Outer extends Item {
     public static Outer create(int price, int stockQuantity, String name, Size size) {
         return new Outer(name, price, stockQuantity, size);
     }
+
+    public void updateInfo(String name, int price, Size size) {
+        super.updateInfo(name, price);
+
+        this.size = size;
+    }
 }

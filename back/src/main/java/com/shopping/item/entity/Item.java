@@ -29,6 +29,8 @@ public abstract class Item extends BaseEntity {
     @Column(nullable = false)
     private int stockQuantity;
 
+    private boolean deleted;
+
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
@@ -46,6 +48,7 @@ public abstract class Item extends BaseEntity {
         this.name = name;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.deleted = false;
     }
 
     /**
@@ -119,5 +122,9 @@ public abstract class Item extends BaseEntity {
      */
     public void removeCategory() {
         this.category = null;
+    }
+
+    public void delete() {
+        this.deleted = true;
     }
 }
