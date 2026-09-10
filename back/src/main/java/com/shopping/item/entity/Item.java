@@ -1,6 +1,7 @@
 package com.shopping.item.entity;
 
 import com.shopping.common.entity.BaseEntity;
+import com.shopping.item.entity.clothes.Size;
 import com.shopping.item.exception.InsufficientStockException;
 import com.shopping.item.exception.InvalidItemValueException;
 import jakarta.persistence.*;
@@ -126,5 +127,11 @@ public abstract class Item extends BaseEntity {
 
     public void delete() {
         this.deleted = true;
+    }
+
+    protected void validateSize(Size size) {
+        if (size == null) {
+            throw new InvalidItemValueException("사이즈는 필수입니다.");
+        }
     }
 }

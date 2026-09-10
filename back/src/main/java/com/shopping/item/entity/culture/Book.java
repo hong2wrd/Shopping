@@ -1,6 +1,7 @@
 package com.shopping.item.entity.culture;
 
 import com.shopping.item.entity.Item;
+import com.shopping.item.exception.InvalidItemValueException;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -39,16 +40,14 @@ public class Book extends Item {
     }
 
     public void updateInfo(String name, int price, String author) {
-        super.updateInfo(name, price);
-
         validateAuthor(author);
-
+        super.updateInfo(name, price);
         this.author = author;
     }
 
     private void validateAuthor(String author) {
         if(author == null || author.isBlank()) {
-            throw new IllegalArgumentException("저자명은 필수사항입니다.");
+            throw new InvalidItemValueException("저자명은 필수사항입니다.");
         }
     }
 

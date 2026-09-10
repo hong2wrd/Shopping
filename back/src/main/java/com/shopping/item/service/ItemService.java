@@ -34,11 +34,19 @@ public class ItemService {
     @Transactional(readOnly = true)
     public ItemRespDto searchItem(Long itemId) {
 
-        Item findItem = itemRepository.findById(itemId)
+        Item findItem = itemRepository.findByIdAndDeletedFalse(itemId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
         if(findItem instanceof Book book) {
             return ItemMapper.toDto(book);
+        } else if(findItem instanceof Top top) {
+            return ItemMapper.toDto(top);
+        } else if(findItem instanceof Bottom bottom) {
+            return ItemMapper.toDto(bottom);
+        } else if(findItem instanceof Outer outer) {
+            return ItemMapper.toDto(outer);
+        } else if(findItem instanceof Shoes shoes) {
+            return ItemMapper.toDto(shoes);
         }
 
         throw new BusinessException(ErrorCode.ITEM_NOT_SUPPORTED);

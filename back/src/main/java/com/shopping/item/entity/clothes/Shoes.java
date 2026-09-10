@@ -18,7 +18,7 @@ public class Shoes extends Item {
 
     protected Shoes(String name, int price, int stockQuantity, Size size) {
         super(name, price, stockQuantity);
-
+        validateSize(size);
         this.size = size;
     }
 
@@ -35,8 +35,8 @@ public class Shoes extends Item {
     }
 
     public void updateInfo(String name, int price, Size size) {
+        validateSize(size);
         super.updateInfo(name, price);
-
         this.size = size;
     }
 }

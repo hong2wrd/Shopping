@@ -13,7 +13,12 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("""
-       SELECT i FROM Item i WHERE i.id = :itemId
+           SELECT i
+           FROM Item i
+           WHERE i.id = :itemId
+             AND i.deleted = false
     """)
     Optional<Item> findByIdForUpdate(@Param("itemId") Long itemId);
+
+    Optional<Item> findByIdAndDeletedFalse(@Param("id") Long itemId);
 }

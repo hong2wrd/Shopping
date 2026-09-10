@@ -13,9 +13,6 @@ public class ItemUpdateReqDto {
     @NotNull(message = "상품 ID는 필수 입력값입니다.")
     private Long itemId;
 
-    @NotNull(message = "상품 타입은 필수입니다.")
-    private ItemType itemtype;
-
     @NotBlank(message = "상품명은 필수 입력 항목입니다.")
     private String name;
 

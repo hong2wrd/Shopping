@@ -20,6 +20,10 @@ public final class ItemMapper {
                 .itemId(item.getId())
                 .build();
 
+        itemRespDto.setName(item.getName());
+        itemRespDto.setPrice(item.getPrice());
+        itemRespDto.setQuantity(item.getStockQuantity());
+
         if(item instanceof Book book) {
             itemRespDto.setItemType(ItemType.BOOK);
             itemRespDto.setAuthor(book.getAuthor());

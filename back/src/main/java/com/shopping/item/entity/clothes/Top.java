@@ -1,6 +1,7 @@
 package com.shopping.item.entity.clothes;
 
 import com.shopping.item.entity.Item;
+import com.shopping.item.exception.InvalidItemValueException;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,7 +19,7 @@ public class Top extends Item {
 
     protected Top(String name, int price, int stockQuantity, Size size) {
         super(name, price, stockQuantity);
-
+        validateSize(size);
         this.size = size;
     }
 
@@ -35,8 +36,9 @@ public class Top extends Item {
     }
 
     public void updateInfo(String name, int price, Size size) {
+        validateSize(size);
         super.updateInfo(name, price);
-
         this.size = size;
     }
+
 }
