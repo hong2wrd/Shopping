@@ -1,6 +1,9 @@
 spring:
   application:
     name: shopping
+  threads:
+    virtual:
+      enabled: true
   datasource:
     url: jdbc:mysql://localhost:3306/${DB_NAME}
     username: ${DB_USERNAME}
