@@ -3,6 +3,7 @@ package com.shopping.common.exception;
 import com.shopping.common.dto.ResponseDto;
 import com.shopping.item.exception.InsufficientStockException;
 import com.shopping.item.exception.InvalidItemValueException;
+import com.shopping.member.exception.MemberValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,22 +37,28 @@ public class ExceptionHandlers {
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), e.getErrorMap()), e.getHttpStatus());
     }
 
+    @ExceptionHandler(MemberValidationException.class)
+    public ResponseEntity<?> memberValidationExceptionHandler(MemberValidationException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(InvalidItemValueException.class)
     public ResponseEntity<?> invalidItemValueExceptionHandler(InvalidItemValueException e) {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InsufficientStockException.class)
     public ResponseEntity<?> insufficientStockExceptionHandler(InsufficientStockException e) {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage(), null), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<?> runtimeExceptionHandler(RuntimeException e) {
         log.error("Unhandled exception", e);
-        return new ResponseEntity<>(new ResponseDto<>(-1, "서버 내부 오류가 발생했습니다.", null), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ResponseDto<>(-1, "서버 내부 오류가 발생했습니다."), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
