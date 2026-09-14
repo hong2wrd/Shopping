@@ -12,12 +12,16 @@ public enum ErrorCode {
     MEM_CONFIRM(HttpStatus.BAD_REQUEST, "사용자 정보 확인이 필요합니다."),
 
     ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 상품이 없습니다."),
+    ITEM_CONFIRM(HttpStatus.BAD_REQUEST, "상품 정보 확인이 필요합니다."),
     ITEM_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "지원하지 않는 상품입니다."),
 
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 카테고리를 찾을 수 없습니다."),
     CATEGORY_PARENT_NOT_FOUND(HttpStatus.NOT_FOUND, "상위 카테고리를 찾을 수 없습니다."),
 
-    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문정보를 찾을 수 없습니다.")
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문정보를 찾을 수 없습니다."),
+    ORDER_PRICE_NOT_MATCH(HttpStatus.BAD_REQUEST, "주문가격이 일치하지 않습니다."),
+
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제정보를 찾을 수 없습니다.")
     ;
 
     private HttpStatus httpStatus;
