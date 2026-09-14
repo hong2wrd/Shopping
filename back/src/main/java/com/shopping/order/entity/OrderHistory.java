@@ -49,10 +49,34 @@ public class OrderHistory extends BaseEntity {
                 .member(member)
                 .build();
     }
+
+    /**
+     * 상품이력에 대한 유효성 검사
+     * @param item 상품
+     * @param quantity 수량
+     * @param price 가격
+     * @param order 주문
+     * @param member 회원
+     */
     private static void validation(Item item, int quantity, int price, Order order, Member member) {
         if (item == null) {
             throw new OrderValidationException("상품 정보는 필수 사항입니다.");
         }
-        //TODO 유효성 검사
+
+        if (quantity <= 0) {
+            throw new OrderValidationException("상품 수량은 필수 사항입니다.");
+        }
+
+        if (price <= 0) {
+            throw new OrderValidationException("상품 가격은 필수 사항입니다.");
+        }
+
+        if (order == null) {
+            throw new OrderValidationException("주문 정보는 필수 사항입니다.");
+        }
+
+        if (member == null) {
+            throw new OrderValidationException("회원 정보는 필수 사항입니다.");
+        }
     }
 }

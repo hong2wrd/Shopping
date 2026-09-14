@@ -24,11 +24,8 @@ public class OrderCreateReqDto {
         @NotNull(message = "상품 정보(ID)는 필수 사항입니다.")
         private Long itemId;
 
-        @NotNull(message = "상품 수량은 필수 사항입니다.")
+        @Min(value = 1, message = "상품 수량은 1 이상이어야 합니다.")
         private int quantity;
-
-        @NotNull(message = "상품 가격은 필수 사항입니다.")
-        private int price;
     }
 }
 

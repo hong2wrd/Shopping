@@ -2,8 +2,8 @@ package com.shopping.order.entity;
 
 public enum OrderStatus {
     RECEIVED("주문 접수"),
-    PAYMENT_PENDING("결재 대기"),
-    PAYMENT_APPROVED("결재 완료"),
+    PAYMENT_PENDING("결제 대기"),
+    PAYMENT_APPROVED("결제 완료"),
     PREPARING_PRODUCT("상품 준비 중"),
     READY_FOR_SHIPPING("배송 중"),
     SHIPPED("배송 완료"),
