@@ -11,4 +11,14 @@ public enum MemberShip {
     MemberShip(double discount) {
         this.discount = discount;
     }
+
+    /**
+     * 회원 맴버쉽 등급에 따른 할인 금액 계산
+     * @param amount 금액
+     * @return 할인된 금액
+     */
+    public int getDiscountAmount(int amount) {
+        return (int) (amount * (100 - discount / 100));
+
+    }
 }
