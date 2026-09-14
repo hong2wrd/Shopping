@@ -8,6 +8,7 @@ import com.shopping.member.entity.Member;
 import com.shopping.member.repository.MemberRepository;
 import com.shopping.order.dto.request.OrderCreateReqDto;
 import com.shopping.order.dto.response.OrderCreateRespDto;
+import com.shopping.order.dto.response.OrderSearchRespDto;
 import com.shopping.order.entity.Order;
 import com.shopping.order.entity.OrderHistory;
 import com.shopping.order.repository.OrderHistoryRepository;
@@ -30,6 +31,19 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
     private final PaymentService paymentService;
+
+    /**
+     * 주문 검색
+     * @param orderNumber 주문 번호
+     * @param memId 회원 ID
+     * @return 주문 검색 응답 DTO 리스트
+     */
+    public List<OrderSearchRespDto> searchByOrderNumber(String orderNumber, String memId) {
+        Order findOrder = orderRepository.findByOrderNumberAndMemId(orderNumber, memId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
+
+        return orderHistoryRepository.findOrderHistoriesByOrder(findOrder);
+    }
 
     /**
      * 주문 생성
@@ -68,6 +82,8 @@ public class OrderService {
 
         String paymentAttemptId = paymentService.createPayment(order.getId(), findMember.getMemId());
 
+        order.paymentComplete();
+
         return new OrderCreateRespDto(order.getOrderNumber(), paymentAttemptId);
     }
 
@@ -101,7 +117,7 @@ public class OrderService {
         Member findMember = memberRepository.findByMemIdAndRetiredIsFalse(memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
 
-        Order findOrder = orderRepository.findByIdAndMember(orderId, findMember)
+        Order findOrder = orderRepository.findByOrderIdAndMemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         findOrder.orderCancel();

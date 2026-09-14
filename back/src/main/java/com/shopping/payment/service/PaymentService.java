@@ -34,10 +34,7 @@ public class PaymentService {
      * @return 결제 시도 ID
      */
     public String createPayment(long orderId, String memId) {
-        Member findMember = memberRepository.findByMemIdAndRetiredIsFalse(memId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
-
-        Order findOrder = orderRepository.findByIdAndMember(orderId, findMember)
+        Order findOrder = orderRepository.findByOrderIdAndMemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         long amount = findOrder.getTotalPrice() - findOrder.getTotalDiscountPrice();
@@ -56,10 +53,7 @@ public class PaymentService {
     }
 
     public void approvePayment(String attemptId, String paymentKey, String paymentMethod, long orderId, String memId) {
-        Member findMember = memberRepository.findByMemIdAndRetiredIsFalse(memId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
-
-        orderRepository.findByIdAndMember(orderId, findMember)
+        orderRepository.findByOrderIdAndMemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         Payment payment = paymentRepository.findByAttemptIdAndStatusIn(attemptId, List.of(PaymentStatus.IN_PROGRESS))
@@ -73,10 +67,7 @@ public class PaymentService {
      * @param attemptId 결제 시도 ID
      */
     public void cancelPayment(String attemptId, long orderId, String memId) {
-        Member findMember = memberRepository.findByMemIdAndRetiredIsFalse(memId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
-
-        orderRepository.findByIdAndMember(orderId, findMember)
+        orderRepository.findByOrderIdAndMemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         List<PaymentStatus> status = List.of(PaymentStatus.IN_PROGRESS, PaymentStatus.APPROVED, PaymentStatus.PARTIAL_CANCELLED);

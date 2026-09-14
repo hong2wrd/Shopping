@@ -93,6 +93,17 @@ public class Order extends BaseEntity {
     }
 
     /**
+     * 결제 완료
+     */
+    public void paymentComplete() {
+        if(this.status != OrderStatus.RECEIVED) {
+            throw new OrderValidationException("주문 접수 상태에서만 결제 완료가 가능합니다.");
+        }
+
+        this.status = OrderStatus.PAYMENT_APPROVED;
+    }
+
+    /**
      * 주문 취소
      * <br>
      * - 주문 접수 상태에서만 주문 취소가 가능합니다.

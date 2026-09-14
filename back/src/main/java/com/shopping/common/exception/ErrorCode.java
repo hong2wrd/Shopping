@@ -21,6 +21,8 @@ public enum ErrorCode {
     ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "주문정보를 찾을 수 없습니다."),
     ORDER_PRICE_NOT_MATCH(HttpStatus.BAD_REQUEST, "주문가격이 일치하지 않습니다."),
 
+    ORDER_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "주문이력을 찾을 수 없습니다."),
+
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제정보를 찾을 수 없습니다.")
     ;
 
