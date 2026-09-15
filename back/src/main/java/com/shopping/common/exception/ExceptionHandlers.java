@@ -4,6 +4,8 @@ import com.shopping.common.dto.ResponseDto;
 import com.shopping.item.exception.InsufficientStockException;
 import com.shopping.item.exception.InvalidItemValueException;
 import com.shopping.member.exception.MemberValidationException;
+import com.shopping.order.exception.OrderValidationException;
+import com.shopping.payment.exception.PaymentValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +55,18 @@ public class ExceptionHandlers {
     public ResponseEntity<?> insufficientStockExceptionHandler(InsufficientStockException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(OrderValidationException.class)
+    public ResponseEntity<?> orderValidationExceptionHandler(OrderValidationException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PaymentValidationException.class)
+    public ResponseEntity<?> paymentValidationExceptionHandler(PaymentValidationException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RuntimeException.class)
