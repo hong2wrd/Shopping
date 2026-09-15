@@ -2,10 +2,9 @@ package com.shopping.payment.service;
 
 import com.shopping.common.exception.BusinessException;
 import com.shopping.common.exception.ErrorCode;
-import com.shopping.member.entity.Member;
-import com.shopping.member.repository.MemberRepository;
 import com.shopping.order.entity.Order;
 import com.shopping.order.repository.OrderRepository;
+import com.shopping.payment.dto.request.PaymentApprovedReqDto;
 import com.shopping.payment.entity.Payment;
 import com.shopping.payment.entity.PaymentMethod;
 import com.shopping.payment.entity.PaymentStatus;
@@ -22,7 +21,6 @@ import java.util.List;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final MemberRepository memberRepository;
     private final OrderRepository orderRepository;
 
     /**
@@ -34,7 +32,7 @@ public class PaymentService {
      * @return 결제 시도 ID
      */
     public String createPayment(long orderId, String memId) {
-        Order findOrder = orderRepository.findByOrderIdAndMemId(orderId, memId)
+        Order findOrder = orderRepository.findByIdAndMember_MemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         long amount = findOrder.getTotalPrice() - findOrder.getTotalDiscountPrice();
@@ -52,14 +50,15 @@ public class PaymentService {
         payment.process();
     }
 
-    public void approvePayment(String attemptId, String paymentKey, String paymentMethod, long orderId, String memId) {
-        orderRepository.findByOrderIdAndMemId(orderId, memId)
+    public void approvePayment(PaymentApprovedReqDto approvedReqDto, String memId) {
+        orderRepository.findByOrderNumberAndMember_MemId(approvedReqDto.getOrderNumber(), memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
-        Payment payment = paymentRepository.findByAttemptIdAndStatusIn(attemptId, List.of(PaymentStatus.IN_PROGRESS))
+        Payment payment = paymentRepository
+                .findByAttemptIdAndStatusIn(approvedReqDto.getAttemptId(),List.of(PaymentStatus.IN_PROGRESS))
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 
-        payment.approve(paymentKey, PaymentMethod.valueOf(paymentMethod));
+        payment.approve(approvedReqDto.getPaymentKey(), PaymentMethod.valueOf(approvedReqDto.getPaymentMethod()));
     }
 
     /**
@@ -67,7 +66,7 @@ public class PaymentService {
      * @param attemptId 결제 시도 ID
      */
     public void cancelPayment(String attemptId, long orderId, String memId) {
-        orderRepository.findByOrderIdAndMemId(orderId, memId)
+        orderRepository.findByIdAndMember_MemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         List<PaymentStatus> status = List.of(PaymentStatus.IN_PROGRESS, PaymentStatus.APPROVED, PaymentStatus.PARTIAL_CANCELLED);

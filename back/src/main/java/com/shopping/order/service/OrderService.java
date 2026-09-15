@@ -39,7 +39,7 @@ public class OrderService {
      * @return 주문 검색 응답 DTO 리스트
      */
     public List<OrderSearchRespDto> searchByOrderNumber(String orderNumber, String memId) {
-        Order findOrder = orderRepository.findByOrderNumberAndMemId(orderNumber, memId)
+        Order findOrder = orderRepository.findByOrderNumberAndMember_MemId(orderNumber, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         return orderHistoryRepository.findOrderHistoriesByOrder(findOrder);
@@ -113,11 +113,7 @@ public class OrderService {
      * @param memId 회원 ID
      */
     public void cancelOrder(Long orderId, String attemptId, String memId) {
-
-        Member findMember = memberRepository.findByMemIdAndRetiredIsFalse(memId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
-
-        Order findOrder = orderRepository.findByOrderIdAndMemId(orderId, memId)
+        Order findOrder = orderRepository.findByIdAndMember_MemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         findOrder.orderCancel();
