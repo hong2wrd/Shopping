@@ -115,4 +115,12 @@ public class Order extends BaseEntity {
 
         this.status = OrderStatus.CANCELED;
     }
+
+    public void orderPaymentApproved() {
+        if(this.status != OrderStatus.RECEIVED) {
+            throw new OrderValidationException("주문 접수 상태에서만 결재완료가 가능합니다.");
+        }
+
+        this.status = OrderStatus.PAYMENT_APPROVED;
+    }
 }

@@ -1,19 +1,25 @@
 package com.shopping.payment.service;
 
+import com.shopping.common.outbox.entity.Outbox;
 import com.shopping.common.exception.BusinessException;
 import com.shopping.common.exception.ErrorCode;
+import com.shopping.common.outbox.repository.OutBoxRepository;
 import com.shopping.order.entity.Order;
 import com.shopping.order.repository.OrderRepository;
 import com.shopping.payment.dto.request.PaymentApprovedReqDto;
 import com.shopping.payment.entity.Payment;
 import com.shopping.payment.entity.PaymentMethod;
 import com.shopping.payment.entity.PaymentStatus;
+import com.shopping.payment.event.PaymentApprovedEvent;
 import com.shopping.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.ObjectMapper;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -22,6 +28,8 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
+    private final OutBoxRepository outBoxRepository;
+    private final ObjectMapper om;
 
     /**
      * 결제 생성
@@ -51,14 +59,29 @@ public class PaymentService {
     }
 
     public void approvePayment(PaymentApprovedReqDto approvedReqDto, String memId) {
-        orderRepository.findByOrderNumberAndMember_MemId(approvedReqDto.getOrderNumber(), memId)
+        Order findOrder = orderRepository.findByOrderNumberAndMember_MemId(approvedReqDto.getOrderNumber(), memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
-        Payment payment = paymentRepository
+        Payment findPayment = paymentRepository
                 .findByAttemptIdAndStatusIn(approvedReqDto.getAttemptId(),List.of(PaymentStatus.IN_PROGRESS))
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 
-        payment.approve(approvedReqDto.getPaymentKey(), PaymentMethod.valueOf(approvedReqDto.getPaymentMethod()));
+        findPayment.approve(approvedReqDto.getPaymentKey(), PaymentMethod.valueOf(approvedReqDto.getPaymentMethod()));
+
+        PaymentApprovedEvent paymentApprovedEvent = new PaymentApprovedEvent(
+                UUID.randomUUID().toString(),
+                findOrder.getId(),
+                findPayment.getId(),
+                findPayment.getAmount(),
+                LocalDate.now()
+        );
+
+        findOrder.orderPaymentApproved();
+
+        String payload = om.writeValueAsString(paymentApprovedEvent);
+
+        Outbox outbox = Outbox.pending("shopping.payment.approved", findOrder.getOrderNumber(), paymentApprovedEvent.eventId(), payload);
+        outBoxRepository.save(outbox);
     }
 
     /**
