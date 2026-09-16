@@ -1,5 +1,6 @@
 package com.shopping.payment.service;
 
+import com.shopping.common.kafka.Topic;
 import com.shopping.common.outbox.entity.Outbox;
 import com.shopping.common.exception.BusinessException;
 import com.shopping.common.exception.ErrorCode;
@@ -70,17 +71,18 @@ public class PaymentService {
 
         PaymentApprovedEvent paymentApprovedEvent = new PaymentApprovedEvent(
                 UUID.randomUUID().toString(),
-                findOrder.getId(),
+                findOrder.getOrderNumber(),
                 findPayment.getId(),
                 findPayment.getAmount(),
-                LocalDate.now()
+                LocalDate.now(),
+                memId
         );
 
         findOrder.orderPaymentApproved();
 
         String payload = om.writeValueAsString(paymentApprovedEvent);
 
-        Outbox outbox = Outbox.pending("shopping.payment.approved", findOrder.getOrderNumber(), paymentApprovedEvent.eventId(), payload);
+        Outbox outbox = Outbox.pending(Topic.PAYMENT_APPROVED, findOrder.getOrderNumber(), paymentApprovedEvent.eventId(), payload);
         outBoxRepository.save(outbox);
     }
 

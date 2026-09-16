@@ -4,9 +4,10 @@ import java.time.LocalDate;
 
 public record PaymentApprovedEvent(
         String eventId,
-        Long orderId,
+        String orderNumber,
         Long paymentId,
         long amount,
-        LocalDate occurredAt
+        LocalDate occurredAt,
+        String memId
 ) {
 }
