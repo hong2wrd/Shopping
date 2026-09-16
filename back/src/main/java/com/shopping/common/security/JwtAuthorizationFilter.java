@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import java.util.List;
  * 모든 요청 URL 검증(토큰)
  */
 @Slf4j
+@Component
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final JwtProperties jwtProperties;

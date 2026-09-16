@@ -45,7 +45,7 @@ public class JwtUtil {
             String id = decodedJwt.getClaim("id").asString();
             String role = decodedJwt.getClaim("role").asString();
             String name = decodedJwt.getClaim("name").asString();
-            return new MemberDetails(Member.of(id, role, name));
+            return new MemberDetails(Member.of(id, name, role));
         } catch(JWTVerificationException e) {
             throw new InternalAuthenticationServiceException( "JWT가 만료되었거나 유효하지 않습니다.", e);
         }

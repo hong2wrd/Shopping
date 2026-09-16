@@ -7,8 +7,10 @@ import com.shopping.common.security.JwtAuthorizationFilter;
 import com.shopping.common.security.MemberDetailsService;
 import com.shopping.common.redis.repository.RedisRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,10 +34,11 @@ import static com.shopping.common.util.ResponseUtil.response;
 public class SecurityConfig {
 
     private final JwtProperties jwtProperties;
-    private final RedisRefreshTokenRepository redisRefreshTokenRepository;
 
     @Bean
-    public SecurityFilterChain securityFilter(HttpSecurity httpSecurity, AuthenticationManager authenticationManager) {
+    public SecurityFilterChain securityFilter(HttpSecurity httpSecurity,
+                                              JwtAuthenticationFilter jwtAuthenticationFilter,
+                                              JwtAuthorizationFilter jwtAuthorizationFilter) {
         return httpSecurity
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -43,12 +46,13 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .logout(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth ->
+                .authorizeHttpRequests(auth -> auth
                         // TODO 추후 변경 예정
-                        auth.anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.POST, "/member").permitAll()
+                        .anyRequest().authenticated())
 
-                .addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtProperties, redisRefreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
-                .addFilter(new JwtAuthorizationFilter(authenticationManager, jwtProperties))
+                .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilter(jwtAuthorizationFilter)
 
                 .exceptionHandling(eh -> eh
                         .authenticationEntryPoint((request, response, authException) -> {
@@ -63,7 +67,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.addAllowedOrigin("*");
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         corsConfiguration.setAllowCredentials(true);
@@ -88,5 +92,19 @@ public class SecurityConfig {
                 .passwordEncoder(passwordEncoder);
 
         return builder.build();
+    }
+
+    @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter> authenticationFilterRegistration(JwtAuthenticationFilter filter) {
+        FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
+    }
+
+    @Bean
+    public FilterRegistrationBean<JwtAuthorizationFilter> authorizationFilterRegistration(JwtAuthorizationFilter filter) {
+        FilterRegistrationBean<JwtAuthorizationFilter> registration = new FilterRegistrationBean<>(filter);
+        registration.setEnabled(false);
+        return registration;
     }
 }
