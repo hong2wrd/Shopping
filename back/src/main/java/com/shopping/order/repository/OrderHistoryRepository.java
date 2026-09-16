@@ -5,6 +5,7 @@ import com.shopping.order.entity.Order;
 import com.shopping.order.entity.OrderHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -28,4 +29,14 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Long
     List<OrderSearchRespDto> findOrderHistoriesByOrderToDto(Order order);
 
     List<OrderHistory> findOrderHistoriesByOrder(Order order);
+
+    @Query("""
+        SELECT oh
+        FROM OrderHistory oh
+            JOIN FETCH oh.order o
+            JOIN FETCH oh.item i
+        WHERE oh.member.memId = :memId
+        ORDER BY o.createdAt DESC, o.id DESC, oh.id ASC
+    """)
+    List<OrderHistory> findByMemId(@Param("memId") String memId);
 }

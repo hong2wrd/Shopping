@@ -24,6 +24,11 @@ public class OderController {
         return ResponseEntity.ok(orderService.searchByOrderNumber(orderNumber, memberDetails.getUsername()));
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<?> searchByMemberId(@AuthenticationPrincipal MemberDetails memberDetails) {
+        return ResponseEntity.ok(orderService.searchByMemberId(memberDetails.getUsername()));
+    }
+
     @PostMapping
     public ResponseEntity<?> saveOrder(@RequestBody @Valid OrderCreateReqDto orderCreateReqDto,
                                        @AuthenticationPrincipal MemberDetails memberDetails) {

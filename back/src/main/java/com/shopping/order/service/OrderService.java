@@ -9,17 +9,21 @@ import com.shopping.member.entity.Member;
 import com.shopping.member.repository.MemberRepository;
 import com.shopping.order.dto.request.OrderCreateReqDto;
 import com.shopping.order.dto.response.OrderCreateRespDto;
+import com.shopping.order.dto.response.OrderSearchListRespDto;
 import com.shopping.order.dto.response.OrderSearchRespDto;
 import com.shopping.order.entity.Order;
 import com.shopping.order.entity.OrderHistory;
 import com.shopping.order.repository.OrderHistoryRepository;
 import com.shopping.order.repository.OrderRepository;
 import com.shopping.payment.service.PaymentService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
@@ -129,4 +133,36 @@ public class OrderService {
         paymentService.cancelPayment(attemptId, orderId, memId);
     }
 
+    @Transactional(readOnly = true)
+    public Object searchByMemberId(String memId) {
+        Map<Long, List<OrderHistory>> groupBy = orderHistoryRepository.findByMemId(memId)
+                .stream()
+                .collect(Collectors.groupingBy(history ->
+                                history.getOrder().getId(),
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+
+        return groupBy.values().stream()
+                .map(orderHistories ->  {
+                    Order order = orderHistories.getFirst().getOrder();
+
+                    List<OrderSearchRespDto> items = orderHistories.stream()
+                            .map(oh -> new OrderSearchRespDto(
+                                    oh.getItem().getId(),
+                                    oh.getItem().getName(),
+                                    oh.getPrice(),
+                                    oh.getQuantity()
+                            ))
+                            .toList();
+
+                    return new OrderSearchListRespDto(
+                            order.getOrderNumber(),
+                            order.getStatus().name(),
+                            order.getCreatedAt(),
+                            items
+                    );
+                })
+                .toList();
+    }
 }
