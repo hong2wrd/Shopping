@@ -6,4 +6,4 @@ spring:
       ddl-auto: update
 
 cookie:
-  secure: false;
+  secure: false

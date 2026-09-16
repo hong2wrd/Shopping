@@ -9,6 +9,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+  kafka:
+    bootstrap-servers: localhost:9092
+    listener:
+      auto-startup: false
+    admin:
+      auto-create: false
 
 redis:
   host: ${REDIS_HOST:localhost}
@@ -16,4 +22,4 @@ redis:
   password: ${REDIS_PASSWORD:1234}
 
 cookie:
-  secure: false;
+  secure: false

@@ -48,4 +48,4 @@ redis:
   password: ${REDIS_PASSWORD}
 
 cookie:
-  secure: true;
+  secure: true
