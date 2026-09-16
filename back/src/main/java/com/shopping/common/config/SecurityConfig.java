@@ -5,7 +5,7 @@ import com.shopping.common.jwt.JwtProperties;
 import com.shopping.common.security.JwtAuthenticationFilter;
 import com.shopping.common.security.JwtAuthorizationFilter;
 import com.shopping.common.security.MemberDetailsService;
-import com.shopping.common.redis.repository.RedisRefreshTokenRepository;
+import com.shopping.member.entity.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -49,6 +49,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // TODO 추후 변경 예정
                         .requestMatchers(HttpMethod.POST, "/member").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/item/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/item").hasAnyRole(Role.SELLER.name(), Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/item").hasAnyRole(Role.SELLER.name(), Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/item/{itemId}").hasAnyRole(Role.SELLER.name(), Role.ADMIN.name())
                         .anyRequest().authenticated())
 
                 .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
