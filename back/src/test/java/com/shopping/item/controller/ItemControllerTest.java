@@ -51,11 +51,11 @@ class ItemControllerTest {
 
     @BeforeEach
     void setUp() {
-        Member member = Member.join(
+        Member member = Member.create(
                 "tester",
-                passwordEncoder.encode("123456"),
                 "testName",
-                Role.MEMBER.toString());
+                passwordEncoder.encode("123456")
+                );
         memberRepository.save(member);
 
         Book book = Book.create(1000, 5, "testName", "tester");

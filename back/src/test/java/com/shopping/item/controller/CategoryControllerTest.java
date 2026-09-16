@@ -61,11 +61,11 @@ class CategoryControllerTest {
 
     @BeforeEach
     void setUp() {
-        Member member = Member.join(
+        Member member = Member.create(
                 "tester",
-                passwordEncoder.encode("123456"),
                 "testName",
-                Role.MEMBER.toString());
+                passwordEncoder.encode("123456")
+                );
         memberRepository.save(member);
 
         Book book1 = itemRepository.save(Book.create(10000, 100, "test book1", "tester1"));
