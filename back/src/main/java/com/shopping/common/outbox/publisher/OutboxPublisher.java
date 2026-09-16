@@ -1,6 +1,6 @@
 package com.shopping.common.outbox.publisher;
 
-import com.shopping.common.outbox.dto.OutboxMessage;
+import com.shopping.common.outbox.entity.Outbox;
 import com.shopping.common.outbox.service.OutboxService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +21,14 @@ public class OutboxPublisher {
     @Scheduled(fixedDelay = 1000)
     public void handle() {
         try {
-            for (OutboxMessage outboxMessage : outboxService.findPendingOutboxesTop100()) {
-                String topic = outboxMessage.topic();
-                String key = outboxMessage.key();
-                String payload = outboxMessage.payload();
+            for (Outbox outbox : outboxService.findPendingOutboxesTop100()) {
+                String topic = outbox.getTopic().getName();
+                String key = outbox.getKey();
+                String payload = outbox.getPayload();
 
                 kafkaTemplate.send(topic, key, payload).get(10, TimeUnit.SECONDS);
+
+                outboxService.markAsPublished(outbox.getId());
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

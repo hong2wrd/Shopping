@@ -1,5 +1,7 @@
 package com.shopping.common.outbox.entity;
 
+import com.shopping.common.exception.OutboxValidationException;
+import com.shopping.common.kafka.Topic;
 import com.shopping.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,10 +19,11 @@ public class Outbox extends BaseEntity {
     @Column(nullable = false, unique = true, updatable = false, length = 36)
     private String eventId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, updatable = false)
-    private String topic;
+    private Topic topic;
 
-    @Column(nullable = false, updatable = false)
+    @Column(name = "event_key", nullable = false, updatable = false)
     private String key;
 
     @Builder.Default
@@ -30,9 +33,9 @@ public class Outbox extends BaseEntity {
     @Column(nullable = false)
     private String payload;
 
-    public static Outbox pending(String topic, String key, String eventId, String payload) {
+    public static Outbox pending(Topic topic, String key, String eventId, String payload) {
         if(topic == null || key == null || eventId == null || payload == null) {
-            throw new IllegalArgumentException("Topic and payload and eventId cannot be null");
+            throw new OutboxValidationException("Topic and payload and eventId cannot be null");
         }
 
         return Outbox.builder()
@@ -41,6 +44,14 @@ public class Outbox extends BaseEntity {
                 .eventId(eventId)
                 .payload(payload)
                 .build();
+    }
+
+    public void published() {
+        if(status != OutboxStatus.PENDING) {
+            throw new OutboxValidationException("Outbox is not in PENDING status");
+        }
+
+        status = OutboxStatus.PUBLISHED;
     }
 }
 
