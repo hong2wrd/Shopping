@@ -7,7 +7,7 @@ import com.shopping.common.jwt.JwtType;
 import com.shopping.common.jwt.JwtUtil;
 import com.shopping.common.dto.LoginReqDto;
 import com.shopping.member.entity.Member;
-import com.shopping.redis.repository.RedisRefreshTokenRepository;
+import com.shopping.common.redis.repository.RedisRefreshTokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

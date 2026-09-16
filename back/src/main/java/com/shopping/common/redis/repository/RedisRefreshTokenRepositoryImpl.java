@@ -1,4 +1,4 @@
-package com.shopping.redis.repository;
+package com.shopping.common.redis.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

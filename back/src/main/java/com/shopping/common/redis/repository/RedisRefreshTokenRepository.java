@@ -1,4 +1,4 @@
-package com.shopping.redis.repository;
+package com.shopping.common.redis.repository;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.shopping.redis.config;
+package com.shopping.common.redis.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;

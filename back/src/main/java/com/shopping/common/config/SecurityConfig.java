@@ -5,7 +5,7 @@ import com.shopping.common.jwt.JwtProperties;
 import com.shopping.common.security.JwtAuthenticationFilter;
 import com.shopping.common.security.JwtAuthorizationFilter;
 import com.shopping.common.security.MemberDetailsService;
-import com.shopping.redis.repository.RedisRefreshTokenRepository;
+import com.shopping.common.redis.repository.RedisRefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
