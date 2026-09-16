@@ -120,8 +120,8 @@ public class Payment extends BaseEntity {
         List<PaymentStatus> failed = List.of(
                 PaymentStatus.APPROVED,
                 PaymentStatus.FAILED,
-                PaymentStatus.CANCELLED,
-                PaymentStatus.PARTIAL_CANCELLED);
+                PaymentStatus.CANCELLED
+                );
 
         if(failed.contains(this.status)) {
             throw new PaymentValidationException("이미 결제 처리가 완료된 상태입니다.");
@@ -137,31 +137,13 @@ public class Payment extends BaseEntity {
      * 결제 취소
      */
     public void cancel() {
-        List<PaymentStatus> approved = List.of(PaymentStatus.APPROVED, PaymentStatus.PARTIAL_CANCELLED);
+        List<PaymentStatus> approved = List.of(PaymentStatus.APPROVED);
         if(!approved.contains(this.status)) {
             throw new PaymentValidationException("결제 처리가 완료되지 않은 상태입니다.");
         }
 
         this.status = PaymentStatus.CANCELLED;
         this.cancelAmount = this.amount;
-        this.cancelledAt = LocalDateTime.now();
-    }
-
-    /**
-     * 부분 결제 취소
-     * @param partialCancelAmount 부분 취소 금액
-     */
-    public void partialCancel(long partialCancelAmount) {
-        if(partialCancelAmount <= 0) {
-            throw new PaymentValidationException("부분 취소 금액은 0보다 커야 합니다.");
-        }
-
-        if(partialCancelAmount > this.amount) {
-            throw new PaymentValidationException("부분 취소 금액은 결제 금액보다 작아야 합니다.");
-        }
-
-        this.status = PaymentStatus.PARTIAL_CANCELLED;
-        this.cancelAmount = partialCancelAmount;
         this.cancelledAt = LocalDateTime.now();
     }
 

@@ -25,5 +25,7 @@ public interface OrderHistoryRepository extends JpaRepository<OrderHistory, Long
                   FROM OrderHistory oh
                  WHERE oh.order = :order
             """)
-    List<OrderSearchRespDto> findOrderHistoriesByOrder(Order order);
+    List<OrderSearchRespDto> findOrderHistoriesByOrderToDto(Order order);
+
+    List<OrderHistory> findOrderHistoriesByOrder(Order order);
 }

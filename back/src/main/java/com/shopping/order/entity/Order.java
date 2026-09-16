@@ -106,11 +106,11 @@ public class Order extends BaseEntity {
     /**
      * 주문 취소
      * <br>
-     * - 주문 접수 상태에서만 주문 취소가 가능합니다.
+     * 결제완료 상태에서만 주문 취소 가능
      */
     public void orderCancel() {
-        if(this.status != OrderStatus.RECEIVED) {
-            throw new OrderValidationException("주문 접수에만 주문 취소가 가능합니다.");
+        if(this.status != OrderStatus.PAYMENT_APPROVED) {
+            throw new OrderValidationException("결제완료 상태에서만 주문 취소가 가능합니다.");
         }
 
         this.status = OrderStatus.CANCELED;
@@ -123,4 +123,5 @@ public class Order extends BaseEntity {
 
         this.status = OrderStatus.PAYMENT_APPROVED;
     }
+
 }

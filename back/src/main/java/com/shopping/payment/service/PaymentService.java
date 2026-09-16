@@ -46,17 +46,13 @@ public class PaymentService {
 
         long amount = findOrder.getTotalPrice() - findOrder.getTotalDiscountPrice();
 
+        // TODO 실제 결제가 되었는 지 확인 절차 필요
+
         Payment payment = paymentRepository.save(Payment.create(findOrder, amount));
 
-        return payment.getAttemptId();
-    }
-
-    public void processPayment(String attemptId) {
-        List<PaymentStatus> status = List.of(PaymentStatus.READY, PaymentStatus.IN_PROGRESS, PaymentStatus.FAILED);
-        Payment payment = paymentRepository.findByAttemptIdAndStatusIn(attemptId, status)
-                .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
-
         payment.process();
+
+        return payment.getAttemptId();
     }
 
     public void approvePayment(PaymentApprovedReqDto approvedReqDto, String memId) {
@@ -64,7 +60,7 @@ public class PaymentService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         Payment findPayment = paymentRepository
-                .findByAttemptIdAndStatusIn(approvedReqDto.getAttemptId(),List.of(PaymentStatus.IN_PROGRESS))
+                .findByAttemptIdAndStatusIn(approvedReqDto.getAttemptId(),List.of(PaymentStatus.IN_PROGRESS),memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 
         findPayment.approve(approvedReqDto.getPaymentKey(), PaymentMethod.valueOf(approvedReqDto.getPaymentMethod()));
@@ -94,9 +90,9 @@ public class PaymentService {
         orderRepository.findByIdAndMember_MemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
-        List<PaymentStatus> status = List.of(PaymentStatus.IN_PROGRESS, PaymentStatus.APPROVED, PaymentStatus.PARTIAL_CANCELLED);
+        List<PaymentStatus> status = List.of(PaymentStatus.IN_PROGRESS, PaymentStatus.APPROVED);
 
-        Payment payment = paymentRepository.findByAttemptIdAndStatusIn(attemptId, status)
+        Payment payment = paymentRepository.findByAttemptIdAndStatusIn(attemptId, status, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 
         payment.cancel();

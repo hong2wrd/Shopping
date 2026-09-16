@@ -91,7 +91,7 @@ public abstract class Item extends BaseEntity {
      * 재고 수량 감소
      * @param quantity 감소할 재고 수량
      */
-    public void removeStock(int quantity) {
+    public void decreaseStock(int quantity) {
         if(quantity < 0) {
             throw new InvalidItemValueException("재고 수량은 0보다 작을 수 없습니다.");
         }

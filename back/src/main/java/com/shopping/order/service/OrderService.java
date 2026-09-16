@@ -4,6 +4,7 @@ import com.shopping.common.exception.BusinessException;
 import com.shopping.common.exception.ErrorCode;
 import com.shopping.item.entity.Item;
 import com.shopping.item.repository.ItemRepository;
+import com.shopping.item.service.ItemService;
 import com.shopping.member.entity.Member;
 import com.shopping.member.repository.MemberRepository;
 import com.shopping.order.dto.request.OrderCreateReqDto;
@@ -31,6 +32,7 @@ public class OrderService {
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
     private final PaymentService paymentService;
+    private final ItemService itemService;
 
     /**
      * 주문 검색
@@ -42,7 +44,7 @@ public class OrderService {
         Order findOrder = orderRepository.findByOrderNumberAndMember_MemId(orderNumber, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
-        return orderHistoryRepository.findOrderHistoriesByOrder(findOrder);
+        return orderHistoryRepository.findOrderHistoriesByOrderToDto(findOrder);
     }
 
     /**
@@ -70,8 +72,8 @@ public class OrderService {
         List<OrderHistory> orderHistories = orderCreateReqDto.getOrderItems()
                 .stream()
                 .map(dto -> {
-                    Item findItem = itemRepository.findByIdAndDeletedFalse(dto.getItemId())
-                            .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
+                    Item findItem = itemService.decreaseStock(dto.getItemId(), dto.getQuantity());
+
                     int discountAmount = findMember.getMemberShip().getDiscountAmount(findItem.getPrice());
 
                     return OrderHistory.create(findItem, dto.getQuantity(), discountAmount, order, findMember);
@@ -101,7 +103,7 @@ public class OrderService {
                 })
                 .sum();
 
-        if (totalPrice != orderCreateReqDto.getTotalPrice()) {
+        if (totalPrice != (orderCreateReqDto.getTotalPrice() - orderCreateReqDto.getTotalDiscountPrice())) {
             throw new BusinessException(ErrorCode.ORDER_PRICE_NOT_MATCH);
         }
     }
@@ -116,8 +118,15 @@ public class OrderService {
         Order findOrder = orderRepository.findByIdAndMember_MemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
+        List<OrderHistory> findOrderHistories = orderHistoryRepository.findOrderHistoriesByOrder(findOrder);
+
+        findOrderHistories.forEach(orderHistory ->  {
+            itemService.addStock(orderHistory.getItem().getId(), orderHistory.getQuantity());
+        });
+
         findOrder.orderCancel();
 
         paymentService.cancelPayment(attemptId, orderId, memId);
     }
+
 }

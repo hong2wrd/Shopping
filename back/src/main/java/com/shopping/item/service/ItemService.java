@@ -157,10 +157,12 @@ public class ItemService {
      * @param itemId Item 테이블 PK
      * @param quantity 수량
      */
-    public void removeStock(Long itemId, int quantity) {
+    public Item decreaseStock(Long itemId, int quantity) {
         Item findItem = itemRepository.findByIdForUpdate(itemId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
-        findItem.removeStock(quantity);
+        findItem.decreaseStock(quantity);
+
+        return findItem;
     }
 }
