@@ -18,7 +18,7 @@ public enum MemberShip {
      * @return 할인된 금액
      */
     public int getDiscountAmount(int amount) {
-        return (int) (amount * (100 - discount / 100));
+        return (int) (amount * (1 - discount / 100));
 
     }
 }

@@ -30,7 +30,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private MemberShip memberShip = MemberShip.BRONZE;
 
-    private Role role;
+    @Builder.Default
+    private Role role = Role.MEMBER;
 
     @Builder.Default
     private boolean retired = false;
@@ -38,15 +39,6 @@ public class Member extends BaseEntity {
     public static Member of(String memId, String name, String role) {
         return Member.builder()
                 .memId(memId)
-                .name(name)
-                .role(Role.valueOf(role))
-                .build();
-    }
-
-    public static Member join(String memId, String encryptPassword, String name, String role) {
-        return Member.builder()
-                .memId(memId)
-                .password(encryptPassword)
                 .name(name)
                 .role(Role.valueOf(role))
                 .build();
