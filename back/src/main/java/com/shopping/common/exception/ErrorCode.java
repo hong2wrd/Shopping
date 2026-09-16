@@ -23,8 +23,9 @@ public enum ErrorCode {
 
     ORDER_HISTORY_NOT_FOUND(HttpStatus.NOT_FOUND, "주문이력을 찾을 수 없습니다."),
 
-    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제정보를 찾을 수 없습니다.")
-    ;
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제정보를 찾을 수 없습니다."),
+
+    OUTBOX_NOT_FOUND(HttpStatus.NOT_FOUND, "이벤트를 찾을 수 없습니다."),;
 
     private HttpStatus httpStatus;
     private String message;
