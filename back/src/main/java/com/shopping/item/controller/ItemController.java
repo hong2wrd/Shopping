@@ -27,24 +27,24 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<?> saveItem(@RequestBody @Valid ItemSaveReqDto itemSaveReqDto,
-                                      @AuthenticationPrincipal MemberDetails memberDetails) {
+                                      @AuthenticationPrincipal MemberDetails userDetails) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new ResponseDto<>(1, "상품을 등록하였습니다.", itemService.saveItem(memberDetails.getUsername(), itemSaveReqDto)));
+                .body(new ResponseDto<>(1, "상품을 등록하였습니다.", itemService.saveItem(userDetails.getUsername(), itemSaveReqDto)));
     }
 
     @PutMapping
     public ResponseEntity<?> updateItem(@RequestBody @Valid ItemUpdateReqDto totalItemSaveReqDto,
-                                        @AuthenticationPrincipal MemberDetails memberDetails) {
+                                        @AuthenticationPrincipal MemberDetails userDetails) {
         return ResponseEntity
-                .ok(new ResponseDto<>(1, "상품을 수정하였습니다.", itemService.updateItem(memberDetails.getUsername(), totalItemSaveReqDto)));
+                .ok(new ResponseDto<>(1, "상품을 수정하였습니다.", itemService.updateItem(userDetails.getUsername(), totalItemSaveReqDto)));
     }
 
     @DeleteMapping("/{itemId}")
     public ResponseEntity<?> deleteItem(@PathVariable Long itemId,
-                                        @AuthenticationPrincipal MemberDetails memberDetails) {
+                                        @AuthenticationPrincipal MemberDetails userDetails) {
 
-        itemService.deleteItem(memberDetails.getUsername(), itemId);
+        itemService.deleteItem(userDetails.getUsername(), itemId);
 
         return ResponseEntity
                 .ok(new ResponseDto<>(1, "상품을 삭제하였습니다."));

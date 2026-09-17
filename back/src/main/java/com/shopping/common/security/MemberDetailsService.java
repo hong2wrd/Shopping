@@ -19,6 +19,6 @@ public class MemberDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String memId) throws UsernameNotFoundException {
         Member findMember = memberRepository.findByMemIdAndRetiredIsFalse(memId)
                 .orElseThrow(() -> new InternalAuthenticationServiceException("아이디 및 비밀번호를 확인해주세요."));
-        return new MemberDetails(findMember);
+        return new MemberDetails(findMember.getMemId(), findMember.getName(), findMember.getPassword(), findMember.getRole());
     }
 }

@@ -6,10 +6,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.shopping.common.security.MemberDetails;
 import com.shopping.member.entity.Member;
+import com.shopping.member.entity.Role;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Date;
+import java.util.Optional;
 
 
 public class JwtUtil {
@@ -36,7 +37,7 @@ public class JwtUtil {
      * 토큰 확인
      * return MemberDetails
      */
-    public static UserDetails verify(String token, JwtProperties jwtProperties) {
+    public static org.springframework.security.core.userdetails.UserDetails verify(String token, JwtProperties jwtProperties) {
         try {
             DecodedJWT decodedJwt = JWT
                     .require(Algorithm.HMAC512(jwtProperties.getSecret()))
@@ -45,10 +46,22 @@ public class JwtUtil {
             String id = decodedJwt.getClaim("id").asString();
             String role = decodedJwt.getClaim("role").asString();
             String name = decodedJwt.getClaim("name").asString();
-            return new MemberDetails(Member.of(id, name, role));
+            return new MemberDetails(id, "", name, Role.valueOf(role));
         } catch(JWTVerificationException e) {
             throw new InternalAuthenticationServiceException( "JWT가 만료되었거나 유효하지 않습니다.", e);
         }
+    }
+
+    /**
+     * 토큰에서 회원 아이디 추출
+     * @param token 토큰
+     * @param jwtProperties JWT 프로퍼티
+     * @return 회원 아이디
+     */
+    public static Optional<String> getMemberId(String token, JwtProperties jwtProperties) {
+        return Optional.ofNullable(
+                JWT.decode(token.replace(jwtProperties.getPrefix(), "")).getClaim("id").asString()
+        );
     }
 
 

@@ -1,55 +1,58 @@
 package com.shopping.common.security;
 
 import com.shopping.member.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.jspecify.annotations.Nullable;
+import com.shopping.member.entity.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Getter
-@AllArgsConstructor
-public class MemberDetails implements UserDetails {
+/**
+ * User Details 객체를 생성하기 위한 클래스입니다.
+ * @param memId 회원 아이디
+ * @param password 비밀번호
+ * @param role 권한
+ */
+public record MemberDetails(String memId, String name, String password, Role role) implements UserDetails {
 
-    private final Member member;
+    public MemberDetails(String memId, String name, String password, Role role) {
+        if(memId == null || memId.isBlank()) {
+            throw new IllegalArgumentException("memId is null or blank");
+        }
+
+        if(role == null) {
+            throw new IllegalArgumentException("role is null");
+        }
+
+        this.memId = memId;
+        this.name = name;
+        this.password = password;
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> "ROLE_" + member.getRole());
+        authorities.add(() -> "ROLE_" + role.name());
         return authorities;
     }
 
     @Override
-    public @Nullable String getPassword() {
-        return member.getPassword();
+    public String getPassword() {
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return member.getMemId();
+        return memId;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+    /**
+     * Member 객체를 반환합니다.
+     * @return Member 객체
+     */
+    public Member member() {
+        return Member.of(memId, name, role.toString());
     }
 }

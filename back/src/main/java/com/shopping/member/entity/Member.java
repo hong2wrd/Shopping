@@ -31,9 +31,11 @@ public class Member extends BaseEntity {
     private MemberShip memberShip = MemberShip.BRONZE;
 
     @Builder.Default
+    @Column(nullable = false)
     private Role role = Role.MEMBER;
 
     @Builder.Default
+    @Column(nullable = false)
     private boolean retired = false;
 
     public static Member of(String memId, String name, String role) {
@@ -80,5 +82,16 @@ public class Member extends BaseEntity {
         if (encodedPassword == null || encodedPassword.isBlank()) {
             throw new MemberValidationException("비밀번호는 필수 사항입니다.");
         }
+    }
+
+    /**
+     * Role 변경
+     * @param role 변경할 Role
+     */
+    public void changeRole(Role role) {
+        if(role == null) {
+            throw new MemberValidationException("ROLE은 필수 사항입니다.");
+        }
+        this.role = role;
     }
 }

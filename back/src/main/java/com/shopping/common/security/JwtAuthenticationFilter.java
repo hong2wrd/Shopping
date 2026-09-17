@@ -75,10 +75,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
         MemberDetails memberDetails = (MemberDetails) authResult.getPrincipal();
-        String jwtAccessToken = JwtUtil.create(memberDetails.getMember(), jwtProperties, JwtType.ACCESS);
+
+        String jwtAccessToken = JwtUtil.create(memberDetails.member(), jwtProperties, JwtType.ACCESS);
         String jwtRefreshToken = redisRefreshTokenRepository.findRefreshTokenByMemberId(memberDetails.getUsername())
                 .orElseGet(() -> {
-                    String newRefreshToken = JwtUtil.create(memberDetails.getMember(), jwtProperties, JwtType.REFRESH);
+                    String newRefreshToken = JwtUtil.create(memberDetails.member(), jwtProperties, JwtType.REFRESH);
                     redisRefreshTokenRepository.save(memberDetails.getUsername(), newRefreshToken, jwtProperties.getRefreshExpirationTime());
                     return newRefreshToken;
                 });
@@ -95,7 +96,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        Member member = memberDetails.getMember();
+        Member member = memberDetails.member();
 
         ResponseDto<LoginRespDto> responseDto = new ResponseDto<>(1, "로그인이 성공하였습니다.", new LoginRespDto(member.getMemId(), member.getName()));
 

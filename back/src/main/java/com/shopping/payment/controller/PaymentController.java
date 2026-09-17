@@ -21,8 +21,8 @@ public class PaymentController {
 
     @PatchMapping("/approved")
     public ResponseEntity<Void> approvePayment(@RequestBody @Valid PaymentApprovedReqDto paymentApprovedReqDto,
-                                               @AuthenticationPrincipal MemberDetails memberDetails) {
-        paymentService.approvePayment(paymentApprovedReqDto, memberDetails.getUsername());
+                                               @AuthenticationPrincipal MemberDetails userDetails) {
+        paymentService.approvePayment(paymentApprovedReqDto, userDetails.getUsername());
         return ResponseEntity.ok().build();
     }
 
