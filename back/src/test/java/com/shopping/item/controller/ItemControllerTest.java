@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
+
 import static org.springframework.boot.test.context.SpringBootTest.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -56,7 +58,14 @@ class ItemControllerTest {
                 "testName",
                 passwordEncoder.encode("123456")
                 );
-        memberRepository.save(member);
+
+        Member seller = Member.create(
+                "seller",
+                "sellerName",
+                passwordEncoder.encode("123456")
+                );
+        seller.changeRole(Role.SELLER);
+        memberRepository.saveAll(List.of(member, seller));
 
         Book book = Book.create(1000, 5, "testName", "tester");
         saveId = itemRepository.save(book).getId();
@@ -96,7 +105,7 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("상품 저장 성공")
-    @WithUserDetails(value = "tester", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "seller", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void success_save_item_test() throws Exception {
         // given
         ItemSaveReqDto itemSaveReqDto = new ItemSaveReqDto();
@@ -124,7 +133,7 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("상품 저장 실패(수량이 마이너스일 경우)")
-    @WithUserDetails(value = "tester", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "seller", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void fail_save_item_test1() throws Exception {
         // given
         ItemSaveReqDto itemSaveReqDto = new ItemSaveReqDto();
@@ -152,7 +161,7 @@ class ItemControllerTest {
 
     @Test
     @DisplayName("상품 저장 실패(가격이 마이너스일 경우)")
-    @WithUserDetails(value = "tester", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+    @WithUserDetails(value = "seller", setupBefore = TestExecutionEvent.TEST_EXECUTION)
     void fail_save_item_test2() throws Exception {
         // given
         ItemSaveReqDto itemSaveReqDto = new ItemSaveReqDto();
