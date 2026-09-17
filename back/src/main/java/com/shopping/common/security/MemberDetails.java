@@ -16,19 +16,15 @@ import java.util.Collection;
  */
 public record MemberDetails(String memId, String name, String password, Role role) implements UserDetails {
 
-    public MemberDetails(String memId, String name, String password, Role role) {
-        if(memId == null || memId.isBlank()) {
+    public MemberDetails {
+        if (memId == null || memId.isBlank()) {
             throw new IllegalArgumentException("memId is null or blank");
         }
 
-        if(role == null) {
+        if (role == null) {
             throw new IllegalArgumentException("role is null");
         }
 
-        this.memId = memId;
-        this.name = name;
-        this.password = password;
-        this.role = role;
     }
 
     @Override
