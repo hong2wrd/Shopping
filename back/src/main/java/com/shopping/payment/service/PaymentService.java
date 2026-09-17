@@ -12,6 +12,7 @@ import com.shopping.payment.entity.Payment;
 import com.shopping.payment.entity.PaymentMethod;
 import com.shopping.payment.entity.PaymentStatus;
 import com.shopping.payment.event.PaymentApprovedEvent;
+import com.shopping.payment.event.PaymentCancelledEvent;
 import com.shopping.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
-    private final OutBoxRepository outBoxRepository;
+    private final OutBoxRepository outboxRepository;
     private final ObjectMapper om;
 
     /**
@@ -79,7 +80,7 @@ public class PaymentService {
         String payload = om.writeValueAsString(paymentApprovedEvent);
 
         Outbox outbox = Outbox.pending(Topic.PAYMENT_APPROVED, findOrder.getOrderNumber(), paymentApprovedEvent.eventId(), payload);
-        outBoxRepository.save(outbox);
+        outboxRepository.save(outbox);
     }
 
     /**
@@ -87,14 +88,31 @@ public class PaymentService {
      * @param attemptId 결제 시도 ID
      */
     public void cancelPayment(String attemptId, long orderId, String memId) {
-        orderRepository.findByIdAndMember_MemId(orderId, memId)
+        Order findOrder = orderRepository.findByIdAndMember_MemId(orderId, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
 
         List<PaymentStatus> status = List.of(PaymentStatus.IN_PROGRESS, PaymentStatus.APPROVED);
 
-        Payment payment = paymentRepository.findByAttemptIdAndStatusIn(attemptId, status, memId)
+        Payment findPayment = paymentRepository.findByAttemptIdAndStatusIn(attemptId, status, memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
 
-        payment.cancel();
+        // TODO 실제 결제 API를 통한 확인 및 취소 절차 필요
+
+        findPayment.cancel();
+
+        PaymentCancelledEvent paymentCancelledEvent = new PaymentCancelledEvent(
+                UUID.randomUUID().toString(),
+                findOrder.getOrderNumber(),
+                findPayment.getId(),
+                findPayment.getAmount(),
+                LocalDate.now(),
+                memId
+        );
+
+        String payload = om.writeValueAsString(paymentCancelledEvent);
+
+        Outbox outbox = Outbox.pending(Topic.PAYMENT_CANCELLED, findOrder.getOrderNumber(), paymentCancelledEvent.eventId(), payload);
+
+        outboxRepository.save(outbox);
     }
 }

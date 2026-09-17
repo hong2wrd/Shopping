@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum Topic {
-    PAYMENT_APPROVED("shopping.payment.approved")
+    PAYMENT_APPROVED("shopping.payment.approved"),
+    PAYMENT_CANCELLED("shopping.payment.cancelled"),
     ;
 
     private String name;
