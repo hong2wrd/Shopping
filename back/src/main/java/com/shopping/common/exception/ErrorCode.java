@@ -25,7 +25,14 @@ public enum ErrorCode {
 
     PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "결제정보를 찾을 수 없습니다."),
 
-    OUTBOX_NOT_FOUND(HttpStatus.NOT_FOUND, "이벤트를 찾을 수 없습니다."),;
+    OUTBOX_NOT_FOUND(HttpStatus.NOT_FOUND, "이벤트를 찾을 수 없습니다."),
+
+    REFRESH_TOKEN_VALIDATION_FAILED(HttpStatus.BAD_REQUEST, "Refresh Token이 유효하지 않습니다."),
+
+    REFRESH_TOKEN_EXPIRED(HttpStatus.BAD_REQUEST, "Refresh Token이 만료되었습니다."),
+
+    LOGOUT_FAIL(HttpStatus.BAD_REQUEST, "로그아웃에 실패하였습니다."),
+    ;
 
     private HttpStatus httpStatus;
     private String message;
