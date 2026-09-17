@@ -4,6 +4,7 @@ import com.shopping.common.dto.ResponseDto;
 import com.shopping.item.exception.InsufficientStockException;
 import com.shopping.item.exception.InvalidItemValueException;
 import com.shopping.member.exception.MemberValidationException;
+import com.shopping.notification.exception.NotificationValidException;
 import com.shopping.order.exception.OrderValidationException;
 import com.shopping.payment.exception.PaymentValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +66,12 @@ public class ExceptionHandlers {
 
     @ExceptionHandler(PaymentValidationException.class)
     public ResponseEntity<?> paymentValidationExceptionHandler(PaymentValidationException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(NotificationValidException.class)
+    public ResponseEntity<?> notificationValidExceptionHandler(NotificationValidException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(new ResponseDto<>(-1, e.getMessage()), HttpStatus.BAD_REQUEST);
     }
