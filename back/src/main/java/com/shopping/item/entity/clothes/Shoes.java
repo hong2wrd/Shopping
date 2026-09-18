@@ -16,8 +16,8 @@ public class Shoes extends Item {
     @Enumerated(EnumType.STRING)
     private Size size;
 
-    protected Shoes(String name, int price, int stockQuantity, Size size) {
-        super(name, price, stockQuantity);
+    protected Shoes(String name, int price, int stockQuantity, Size size, String content) {
+        super(name, price, stockQuantity, content);
         validateSize(size);
         this.size = size;
     }
@@ -30,13 +30,13 @@ public class Shoes extends Item {
      * @param size
      * @return
      */
-    public static Shoes create(int price, int stockQuantity, String name, Size size) {
-        return new Shoes(name, price, stockQuantity, size);
+    public static Shoes create(int price, int stockQuantity, String name, Size size, String content) {
+        return new Shoes(name, price, stockQuantity, size, content);
     }
 
-    public void updateInfo(String name, int price, Size size) {
+    public void updateInfo(String name, int price, Size size, String content) {
         validateSize(size);
-        super.updateInfo(name, price);
+        super.updateInfo(name, price, content);
         this.size = size;
     }
 }

@@ -19,6 +19,8 @@ public class ItemUpdateReqDto {
     @Positive(message = "가격은 0원보다 커야 합니다.")
     private int price;
 
+    private String content;
+
     private String author;
 
     private Size size;

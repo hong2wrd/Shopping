@@ -67,7 +67,7 @@ class ItemControllerTest {
         seller.changeRole(Role.SELLER);
         memberRepository.saveAll(List.of(member, seller));
 
-        Book book = Book.create(1000, 5, "testName", "tester");
+        Book book = Book.create(1000, 5, "testName", "tester", "book content1");
         saveId = itemRepository.save(book).getId();
     }
 

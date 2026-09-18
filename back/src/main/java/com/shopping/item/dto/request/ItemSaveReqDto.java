@@ -12,6 +12,7 @@ public class ItemSaveReqDto extends ItemDefaultDto {
 
     @NotNull(message = "상품 타입은 필수입니다.")
     private ItemType itemtype;
+    private String content;
     private String author;
 
     private Size size;

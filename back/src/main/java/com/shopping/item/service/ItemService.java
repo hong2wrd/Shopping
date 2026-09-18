@@ -77,27 +77,32 @@ public class ItemService {
                     itemSaveReqDto.getPrice(),
                     itemSaveReqDto.getQuantity(),
                     itemSaveReqDto.getName(),
-                    itemSaveReqDto.getAuthor());
+                    itemSaveReqDto.getAuthor(),
+                    itemSaveReqDto.getContent());
             case TOP -> Top.create(
                     itemSaveReqDto.getPrice(),
                     itemSaveReqDto.getQuantity(),
                     itemSaveReqDto.getName(),
-                    itemSaveReqDto.getSize());
+                    itemSaveReqDto.getSize(),
+                    itemSaveReqDto.getContent());
             case BOTTOM -> Bottom.create(
                     itemSaveReqDto.getPrice(),
                     itemSaveReqDto.getQuantity(),
                     itemSaveReqDto.getName(),
-                    itemSaveReqDto.getSize());
+                    itemSaveReqDto.getSize(),
+                    itemSaveReqDto.getContent());
             case OUTER -> Outer.create(
                     itemSaveReqDto.getPrice(),
                     itemSaveReqDto.getQuantity(),
                     itemSaveReqDto.getName(),
-                    itemSaveReqDto.getSize());
+                    itemSaveReqDto.getSize(),
+                    itemSaveReqDto.getContent());
             case SHOES -> Shoes.create(
                     itemSaveReqDto.getPrice(),
                     itemSaveReqDto.getQuantity(),
                     itemSaveReqDto.getName(),
-                    itemSaveReqDto.getSize());
+                    itemSaveReqDto.getSize(),
+                    itemSaveReqDto.getContent());
             default -> throw new BusinessException(ErrorCode.ITEM_NOT_SUPPORTED);
         };
     }
@@ -113,15 +118,15 @@ public class ItemService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
 
         if(findItem instanceof Book book) {
-            book.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getAuthor());
+            book.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getAuthor(), itemUpdateReqDto.getContent());
         } else if(findItem instanceof Top top) {
-            top.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
+            top.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize(), itemUpdateReqDto.getContent());
         } else if(findItem instanceof Bottom bottom) {
-            bottom.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
+            bottom.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize(), itemUpdateReqDto.getContent());
         } else if(findItem instanceof Outer outer) {
-            outer.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
+            outer.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize(), itemUpdateReqDto.getContent());
         } else if(findItem instanceof Shoes shoes) {
-            shoes.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize());
+            shoes.updateInfo(itemUpdateReqDto.getName(), itemUpdateReqDto.getPrice(), itemUpdateReqDto.getSize(), itemUpdateReqDto.getContent());
         }
         return ItemMapper.toDto(findItem);
     }

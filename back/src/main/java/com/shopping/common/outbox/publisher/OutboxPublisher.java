@@ -18,7 +18,7 @@ public class OutboxPublisher {
     private final OutboxService outboxService;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedDelay = 60000) // 1 minute
     public void handle() {
         try {
             for (Outbox outbox : outboxService.findPendingOutboxesTop100()) {

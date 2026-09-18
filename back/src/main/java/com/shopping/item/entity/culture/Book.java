@@ -18,8 +18,8 @@ public class Book extends Item {
     @Column
     private String author;
 
-    protected Book(String name, int price, int stockQuantity, String author) {
-        super(name, price, stockQuantity);
+    protected Book(String name, int price, int stockQuantity, String author, String content) {
+        super(name, price, stockQuantity, content);
 
         validateAuthor(author);
 
@@ -35,13 +35,13 @@ public class Book extends Item {
      * @param author     저자
      * @return 생성된 도서
      */
-    public static Book create(int price, int stockQuantity, String name, String author) {
-        return new Book(name, price, stockQuantity, author);
+    public static Book create(int price, int stockQuantity, String name, String author, String content) {
+        return new Book(name, price, stockQuantity, author, content);
     }
 
-    public void updateInfo(String name, int price, String author) {
+    public void updateInfo(String name, int price, String author, String content) {
         validateAuthor(author);
-        super.updateInfo(name, price);
+        super.updateInfo(name, price, content);
         this.author = author;
     }
 

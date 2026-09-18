@@ -68,8 +68,8 @@ class CategoryControllerTest {
                 );
         memberRepository.save(member);
 
-        Book book1 = itemRepository.save(Book.create(10000, 100, "test book1", "tester1"));
-        Book book2 = itemRepository.save(Book.create(20000, 200, "test book2", "tester1"));
+        Book book1 = itemRepository.save(Book.create(10000, 100, "test book1", "tester1", "book content1"));
+        Book book2 = itemRepository.save(Book.create(20000, 200, "test book2", "tester1", "book content2"));
         Category bookCategory = Category.create("도서");
         bookCategory.addItem(book1);
         bookCategory.addItem(book2);
@@ -77,10 +77,10 @@ class CategoryControllerTest {
         Category category = categoryRepository.save(bookCategory);
 
         Category clothesCategory = Category.create("옷");
-        Top top1 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.S));
-        Top top2 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.M));
-        Top top3 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.L));
-        Top top4 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.XL));
+        Top top1 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.S, "top content1"));
+        Top top2 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.M, "top content2"));
+        Top top3 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.L,"top content3"));
+        Top top4 = itemRepository.save(Top.create(1000, 10, "test etc1", Size.XL, "top content4"));
         clothesCategory.addItem(top1);
         clothesCategory.addItem(top2);
         clothesCategory.addItem(top3);

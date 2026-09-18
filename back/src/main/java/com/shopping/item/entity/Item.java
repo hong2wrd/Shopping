@@ -24,6 +24,9 @@ public abstract class Item extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
+    @Column
+    private String content;
+
     @Column(nullable = false)
     private int price;
 
@@ -43,12 +46,13 @@ public abstract class Item extends BaseEntity {
      * @param price 상품 가격
      * @param stockQuantity 상품 재고 수량
      */
-    protected Item(String name, int price, int stockQuantity) {
+    protected Item(String name, int price, int stockQuantity, String content) {
         validate(name, price);
 
         this.name = name;
         this.price = price;
         this.stockQuantity = stockQuantity;
+        this.content = content;
         this.deleted = false;
     }
 
@@ -57,11 +61,12 @@ public abstract class Item extends BaseEntity {
      * @param name 변경할 상품 이름
      * @param price 변경할 상품 가격
      */
-    public void updateInfo(String name, int price) {
+    public void updateInfo(String name, int price, String content) {
         validate(name, price);
 
         this.name = name;
         this.price = price;
+        this.content = content;
     }
 
     /**
