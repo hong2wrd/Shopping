@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
@@ -93,5 +95,55 @@ public class Member extends BaseEntity {
             throw new MemberValidationException("ROLE은 필수 사항입니다.");
         }
         this.role = role;
+    }
+
+    /**
+     * 이름 변경
+     * @param changeName 변경할 이름
+     */
+    public void updateName(String changeName) {
+        if(changeName == null || changeName.isBlank()) {
+            throw new MemberValidationException("사용자 이름은 필수 사항입니다.");
+        }
+
+        if(changeName.length() > 20) {
+            throw new MemberValidationException("사용자 이름은 20자 이하여야합니다.");
+        }
+
+        if(changeName.length() < 2) {
+            throw new MemberValidationException("사용자 이름은 2자 이상이어야합니다.");
+        }
+
+        if(this.name.equals(changeName)) {
+            throw new MemberValidationException("변경하려는 이름이 현재 이름과 동일합니다.");
+        }
+
+        this.name = changeName;
+    }
+
+    /**
+     * 비밀번호 변경
+     * @param encode 변경할 비밀번호
+     */
+    public void updatePassword(String encode) {
+        if(encode == null || encode.isBlank()) {
+            throw new MemberValidationException("비밀번호는 필수 사항입니다.");
+        }
+
+        if(encode.length() < 60) {
+            throw new IllegalArgumentException("비밀번호 암호화의 자리 수 확인 필요");
+        }
+
+        this.password = encode;
+    }
+
+    public void retire() {
+        if(this.retired) {
+            throw new MemberValidationException("이미 탈퇴한 회원입니다.");
+        }
+
+        this.retired = true;
+        this.name = "Leave " + this.role.name();
+        this.password = UUID.randomUUID().toString();
     }
 }
