@@ -16,6 +16,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
   jwt:
     prefix: "Bearer "
     access-expiration-time: 1_800_000 # 30분
