@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .logout(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // TODO 추후 변경 예정
+                        .requestMatchers("/admin/**").hasRole(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/common/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/member").permitAll()
                         .requestMatchers(HttpMethod.GET, "/item/**").permitAll()
