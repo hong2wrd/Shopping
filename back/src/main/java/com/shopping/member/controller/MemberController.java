@@ -2,6 +2,7 @@ package com.shopping.member.controller;
 
 import com.shopping.common.dto.ResponseDto;
 import com.shopping.member.dto.request.MemberJoinReqDto;
+import com.shopping.member.dto.request.MemberLeaveReqDto;
 import com.shopping.member.dto.request.MemberPasswordUpdateReqDto;
 import com.shopping.member.dto.request.MemberUpdateReqDto;
 import com.shopping.member.service.MemberService;
@@ -74,8 +75,9 @@ public class MemberController {
     }
 
     @PatchMapping("/retire")
-    public ResponseEntity<?> retire(@AuthenticationPrincipal UserDetails userDetails) {
-        memberService.retire(userDetails.getUsername());
+    public ResponseEntity<?> retire(@RequestBody MemberLeaveReqDto memberLeaveReqDto,
+                                    @AuthenticationPrincipal UserDetails userDetails) {
+        memberService.retire(userDetails.getUsername(), memberLeaveReqDto.getReason());
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(new ResponseDto<>(1, "탈퇴가 완료되었습니다."));

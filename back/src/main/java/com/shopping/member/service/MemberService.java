@@ -8,7 +8,9 @@ import com.shopping.member.dto.request.MemberUpdateReqDto;
 import com.shopping.member.dto.response.MemberJoinRespDto;
 import com.shopping.member.dto.response.MemberRespDto;
 import com.shopping.member.dto.response.MemberUpdateRespDto;
+import com.shopping.member.entity.Leave;
 import com.shopping.member.entity.Member;
+import com.shopping.member.repository.LeaveRepository;
 import com.shopping.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +24,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LeaveRepository leaveRepository;
 
     /**
      * 사용자 가입
@@ -83,9 +86,11 @@ public class MemberService {
      * 사용자 탈퇴
      * @param memId 사용자 Id
      */
-    public void retire(String memId) {
+    public void retire(String memId, String reason) {
         Member findMember = memberRepository.findByMemIdAndRetiredIsFalse(memId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEM_NOT_FOUND));
         findMember.retire();
+
+        leaveRepository.save(Leave.of(findMember, reason));
     }
 }
