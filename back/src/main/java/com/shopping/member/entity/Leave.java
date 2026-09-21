@@ -21,7 +21,7 @@ public class Leave {
     private String reason;
 
     @Builder.Default
-    private LocalDateTime leaveDate;
+    private LocalDateTime leaveDate = LocalDateTime.now();
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "member_id", nullable = false, unique = true)
