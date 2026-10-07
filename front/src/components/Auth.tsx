@@ -105,8 +105,11 @@ const Auth = () => {
                        ref={setRef}
                        onChange={onChangeInput}
                 />
-                <button className="auth_del_button"
-                        onClick={() => onClickDelButton("id")}><span>삭제</span></button>
+                <button type="button"
+                        className="auth_icon_button auth_del_button"
+                        onClick={() => onClickDelButton("id")}>
+                    <span className="auth_blind">아이디 지우기</span>
+                </button>
             </div>
             <div className="auth_password">
                 <label id={"password_label"} htmlFor="password">비밀번호</label>
@@ -117,8 +120,16 @@ const Auth = () => {
                        ref={setRef}
                        onChange={onChangeInput}
                 />
-                <button onClick={() => setTypePassword(!typePassword)}><span>비밀번호 표시</span></button>
-                <button onClick={() => onClickDelButton("password")}><span>삭제</span></button>
+                <button type="button"
+                        className={`auth_icon_button auth_password_button${typePassword ? '' : ' is_visible'}`}
+                        onClick={() => setTypePassword(!typePassword)}>
+                    <span className="auth_blind">{typePassword ? '비밀번호 표시' : '비밀번호 숨기기'}</span>
+                </button>
+                <button type="button"
+                        className="auth_icon_button auth_del_button"
+                        onClick={() => onClickDelButton("password")}>
+                    <span className="auth_blind">비밀번호 지우기</span>
+                </button>
             </div>
             <div>
                 <span>{span.login}</span>
