@@ -18,7 +18,7 @@ public class OutboxPublisher {
     private final OutboxService outboxService;
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    @Scheduled(fixedDelay = 60000) // 1 minute
+    @Scheduled(fixedDelay = 1000) // 작업 종료 후 1초 대기
     public void handle() {
         try {
             for (Outbox outbox : outboxService.findPendingOutboxesTop100()) {
